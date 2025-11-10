@@ -1,0 +1,17 @@
+
+    <button 
+      [class]="getButtonClasses()"
+      [disabled]="disabled || loading"
+      [type]="type"
+      (click)="handleClick($event)"
+    >
+      <ng-container *ngIf="loading; else contentTemplate">
+        <div class="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+        <span *ngIf="loadingText">{{ loadingText }}</span>
+      </ng-container>
+      
+      <ng-template #contentTemplate>
+        <ng-content></ng-content>
+      </ng-template>
+    </button>
+  

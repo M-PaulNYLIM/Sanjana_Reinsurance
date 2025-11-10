@@ -1,0 +1,198 @@
+<div class="rounded-lg border border-nyl-blue/20 bg-white shadow-xl lg:sticky lg:top-24">
+  <div class="flex items-center justify-between border-b border-nyl-blue/15 px-5 py-4">
+    <div>
+      <h2 class="text-lg font-semibold text-nyl-navy">Treaty details</h2>
+      <p class="text-xs text-gray-500">{{ treaty?.reinsurerName }} • {{ treaty?.productName }}</p>
+    </div>
+    <button
+      type="button"
+      class="inline-flex h-8 w-8 items-center justify-center rounded-full border border-nyl-blue/20 text-nyl-blue transition hover:bg-nyl-light-blue/60"
+      (click)="onClose()"
+      aria-label="Close treaty panel"
+    >
+      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+  <div class="px-5 py-4">
+    <ng-container *ngIf="isEditing && editForm; else treatyDetailView">
+      <form [formGroup]="editForm" class="space-y-6" (ngSubmit)="onSave()">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold text-gray-600" for="edit-reinsurer-id">Reinsurer ID (NAIC)</label>
+            <input
+              id="edit-reinsurer-id"
+              name="edit-reinsurer-id"
+              type="text"
+              class="w-full rounded-md border border-nyl-blue/20 px-3 py-2 text-sm text-[#1f3d5a] focus:border-nyl-blue focus:outline-none focus:ring-1 focus:ring-nyl-blue"
+              formControlName="reinsurerId"
+            />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold text-gray-600" for="edit-reinsurer-name">Reinsurer Name</label>
+            <input
+              id="edit-reinsurer-name"
+              name="edit-reinsurer-name"
+              type="text"
+              class="w-full rounded-md border border-nyl-blue/20 px-3 py-2 text-sm text-[#1f3d5a] focus:border-nyl-blue focus:outline-none focus:ring-1 focus:ring-nyl-blue"
+              formControlName="reinsurerName"
+            />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold text-gray-600" for="edit-treaty-id">Treaty ID</label>
+            <input
+              id="edit-treaty-id"
+              name="edit-treaty-id"
+              type="text"
+              class="w-full rounded-md border border-nyl-blue/20 px-3 py-2 text-sm text-[#1f3d5a] focus:border-nyl-blue focus:outline-none focus:ring-1 focus:ring-nyl-blue"
+              formControlName="treatyId"
+            />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold text-gray-600" for="edit-quota-share">Quota Share %</label>
+            <input
+              id="edit-quota-share"
+              name="edit-quota-share"
+              type="number"
+              min="0"
+              max="100"
+              step="0.01"
+              inputmode="decimal"
+              class="w-full rounded-md border border-nyl-blue/20 px-3 py-2 text-sm text-[#1f3d5a] focus:border-nyl-blue focus:outline-none focus:ring-1 focus:ring-nyl-blue"
+              formControlName="quotaShare"
+            />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold text-gray-600" for="edit-ceding-prem">Ceding Allowance % Premium</label>
+            <input
+              id="edit-ceding-prem"
+              name="edit-ceding-prem"
+              type="number"
+              min="0"
+              max="100"
+              step="0.01"
+              inputmode="decimal"
+              class="w-full rounded-md border border-nyl-blue/20 px-3 py-2 text-sm text-[#1f3d5a] focus:border-nyl-blue focus:outline-none focus:ring-1 focus:ring-nyl-blue"
+              formControlName="cedingAllowancePrem"
+            />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold text-gray-600" for="edit-ceding-av">Ceding Allowance % Avg AV</label>
+            <input
+              id="edit-ceding-av"
+              name="edit-ceding-av"
+              type="number"
+              min="0"
+              max="100"
+              step="0.01"
+              inputmode="decimal"
+              class="w-full rounded-md border border-nyl-blue/20 px-3 py-2 text-sm text-[#1f3d5a] focus:border-nyl-blue focus:outline-none focus:ring-1 focus:ring-nyl-blue"
+              formControlName="cedingAllowanceAv"
+            />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold text-gray-600" for="edit-expense-commission">Expense Allowance % Commission</label>
+            <input
+              id="edit-expense-commission"
+              name="edit-expense-commission"
+              type="number"
+              min="0"
+              max="100"
+              step="0.01"
+              inputmode="decimal"
+              class="w-full rounded-md border border-nyl-blue/20 px-3 py-2 text-sm text-[#1f3d5a] focus:border-nyl-blue focus:outline-none focus:ring-1 focus:ring-nyl-blue"
+              formControlName="expenseAllowanceComm"
+            />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold text-gray-600" for="edit-expense-prem">Expense Allowance % Premium</label>
+            <input
+              id="edit-expense-prem"
+              name="edit-expense-prem"
+              type="number"
+              min="0"
+              max="100"
+              step="0.01"
+              inputmode="decimal"
+              class="w-full rounded-md border border-nyl-blue/20 px-3 py-2 text-sm text-[#1f3d5a] focus:border-nyl-blue focus:outline-none focus:ring-1 focus:ring-nyl-blue"
+              formControlName="expenseAllowancePrem"
+            />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold text-gray-600" for="edit-money-type">Money Type</label>
+            <input
+              id="edit-money-type"
+              name="edit-money-type"
+              type="text"
+              class="w-full rounded-md border border-nyl-blue/20 px-3 py-2 text-sm text-[#1f3d5a] focus:border-nyl-blue focus:outline-none focus:ring-1 focus:ring-nyl-blue"
+              formControlName="moneyType"
+            />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold text-gray-600" for="edit-channel">Channel</label>
+            <input
+              id="edit-channel"
+              name="edit-channel"
+              type="text"
+              class="w-full rounded-md border border-nyl-blue/20 px-3 py-2 text-sm text-[#1f3d5a] focus:border-nyl-blue focus:outline-none focus:ring-1 focus:ring-nyl-blue"
+              formControlName="channel"
+            />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold text-gray-600" for="edit-territory">Territory</label>
+            <input
+              id="edit-territory"
+              name="edit-territory"
+              type="text"
+              class="w-full rounded-md border border-nyl-blue/20 px-3 py-2 text-sm text-[#1f3d5a] focus:border-nyl-blue focus:outline-none focus:ring-1 focus:ring-nyl-blue"
+              formControlName="issueStateCode"
+            />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold text-gray-600" for="edit-product-name">Product Name</label>
+            <input
+              id="edit-product-name"
+              name="edit-product-name"
+              type="text"
+              class="w-full rounded-md border border-nyl-blue/20 px-3 py-2 text-sm text-[#1f3d5a] focus:border-nyl-blue focus:outline-none focus:ring-1 focus:ring-nyl-blue"
+              formControlName="productName"
+            />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold text-gray-600" for="edit-product-code">Product Code</label>
+            <input
+              id="edit-product-code"
+              name="edit-product-code"
+              type="text"
+              class="w-full rounded-md border border-nyl-blue/20 px-3 py-2 text-sm text-[#1f3d5a] focus:border-nyl-blue focus:outline-none focus:ring-1 focus:ring-nyl-blue"
+              formControlName="productCode"
+            />
+          </div>
+          <div class="flex flex-col gap-1 sm:col-span-2">
+            <label class="text-xs font-semibold text-gray-600" for="edit-tenor">Tenor</label>
+            <input
+              id="edit-tenor"
+              name="edit-tenor"
+              type="text"
+              class="w-full rounded-md border border-nyl-blue/20 px-3 py-2 text-sm text-[#1f3d5a] focus:border-nyl-blue focus:outline-none focus:ring-1 focus:ring-nyl-blue"
+              formControlName="tenor"
+            />
+          </div>
+        </div>
+        <div class="flex justify-end gap-2 pt-2" *ngIf="canEdit">
+          <ui-button variant="outline" size="sm" type="button" (click)="onCancel()">Cancel</ui-button>
+          <ui-button size="sm" type="submit">Save changes</ui-button>
+        </div>
+      </form>
+    </ng-container>
+    <ng-template #treatyDetailView>
+      <div class="space-y-4">
+        <div *ngFor="let detail of details" class="flex justify-between gap-4 text-sm">
+          <span class="w-1/2 text-left font-medium text-gray-600">{{ detail.label }}</span>
+          <span class="w-1/2 text-right text-gray-900">{{ detail.value }}</span>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</div>

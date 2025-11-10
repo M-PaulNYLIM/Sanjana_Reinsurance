@@ -1,0 +1,165 @@
+:host {
+  display: block;
+}
+
+.header {
+  background-color: #ffffff;
+  color: #0a385e;
+  border-bottom: 2px solid #0a385e;
+  font-weight: 600;
+}
+
+.header-button {
+  border: 1.5px solid #0a385e;
+  color: #0a385e;
+  background-color: #ffffff;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.header-button svg {
+  color: inherit;
+}
+
+.header-button:hover,
+.header-button:focus-visible {
+  background-color: rgba(10, 56, 94, 0.08);
+  color: #0a385e;
+}
+
+.header-button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(10, 56, 94, 0.18);
+}
+
+.header-button--borderless {
+  border: none;
+  background-color: transparent;
+  color: #0a385e;
+}
+
+.header-button--borderless:hover,
+.header-button--borderless:focus-visible {
+  background-color: #e5e7eb;
+  color: #000000;
+}
+
+.header-button--borderless:focus-visible {
+  box-shadow: 0 0 0 3px rgba(10, 56, 94, 0.18);
+}
+
+.header-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+@media (max-width: 768px) {
+  .header-actions {
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .header-actions > * {
+    flex: 1 1 12rem;
+    min-width: 10rem;
+  }
+
+  .header-actions ui-dropdown-menu {
+    width: 100%;
+  }
+}
+
+.header-button--dropdown {
+  border-radius: 0.75rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.header-menu-item {
+  color: #0a385e;
+  border-radius: 0.5rem;
+}
+
+.header-menu-item a {
+  color: inherit;
+}
+
+.header-menu-item:hover,
+.header-menu-item:focus,
+.header-menu-item:focus-visible {
+  background-color: #e5e7eb !important;
+  color: #000000 !important;
+}
+
+.header-menu-item:hover a,
+.header-menu-item:focus a,
+.header-menu-item:focus-visible a {
+  color: #000000 !important;
+}
+
+.header-menu-item--logout a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.header-menu-item--logout .logout-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.header-menu-item--section {
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  pointer-events: none;
+  opacity: 1 !important;
+}
+
+.header-menu-item--role {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.875rem;
+  color: inherit;
+  cursor: pointer;
+}
+
+.header-menu-item--role:hover:not(.header-menu-item--role-active),
+.header-menu-item--role:focus-visible:not(.header-menu-item--role-active) {
+  background-color: rgba(148, 163, 184, 0.25);
+}
+
+.header-menu-item--role-active {
+  font-weight: 600;
+  color: #0a385e;
+  cursor: default;
+}
+
+.header-menu-item--logout:hover,
+.header-menu-item--logout:focus,
+.header-menu-item--logout:focus-visible {
+  background-color: #0a385e !important;
+  color: #ffffff !important;
+}
+
+.header-menu-item--logout:hover a,
+.header-menu-item--logout:focus a,
+.header-menu-item--logout:focus-visible a {
+  color: #ffffff !important;
+}
+
+.header-menu-item--logout:hover .logout-icon,
+.header-menu-item--logout:focus .logout-icon,
+.header-menu-item--logout:focus-visible .logout-icon {
+  color: #ffffff;
+}

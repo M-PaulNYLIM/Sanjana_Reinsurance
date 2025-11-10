@@ -1,0 +1,13 @@
+
+    <div [class]="getAvatarClasses()">
+      <img
+        *ngIf="src; else fallbackTemplate"
+        [src]="src"
+        [alt]="alt"
+        class="aspect-square h-full w-full object-cover"
+      />
+      <ng-template #fallbackTemplate>
+        <ng-content></ng-content>
+      </ng-template>
+    </div>
+  

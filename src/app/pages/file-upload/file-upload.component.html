@@ -1,0 +1,230 @@
+<div class="mx-auto w-full max-w-6xl">
+  <ui-tabs [value]="activeTab" (valueChange)="activeTab = $event">
+    <!-- <ui-tabs-list>
+      <ui-tabs-trigger value="upload" [activeValue]="activeTab" (trigger)="activeTab = $event">
+        Upload Files
+      </ui-tabs-trigger>
+      <ui-tabs-trigger value="history" [activeValue]="activeTab" (trigger)="activeTab = $event">
+        Upload History
+      </ui-tabs-trigger>
+    </ui-tabs-list> -->
+
+    <ui-tabs-content value="upload" [activeValue]="activeTab">
+      <div class="flex items-center justify-between mb-4">
+        <h1 class="text-main-title font-bold text-gray-900">Upload Files</h1>
+        <a routerLink="/">
+          <ui-button
+            variant="ghost"
+            size="sm"
+            class="flex items-center gap-2 text-gray-600 hover:text-white back-home-btn"
+          >
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Back to Home
+          </ui-button>
+        </a>
+      </div>
+
+      <ui-card class="w-full border-0 p-3 shadow-none">
+        <ui-card-content>
+          <form class="grid gap-2 md:grid-cols-4 md:items-end py-2" novalidate>
+            <div>
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Period Type</mat-label>
+                <mat-select appMatSelectPositionFix [value]="periodType" (selectionChange)="onPeriodTypeChange($event.value)">
+                  <mat-option value="Weekly">Weekly</mat-option>
+                  <mat-option value="Monthly">Monthly</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div>
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Effective Period</mat-label>
+                <mat-select appMatSelectPositionFix [value]="selectedWeekKey" (selectionChange)="onWeekChange($event.value)">
+                  <mat-option *ngFor="let w of getPeriodOptions()" [value]="w.key">{{ w.label }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </form>
+          <div class="text-sm text-gray-600 mt-1">
+            <ng-container *ngIf="selectedWeekKey; else noWeekSelectedTop">
+              Uploading for: <span class="font-medium text-gray-900">{{ getPeriodLabel(selectedWeekKey) }}</span>
+              • Only one Excel can be uploaded for the selected week/month.
+            </ng-container>
+            <ng-template #noWeekSelectedTop>
+              Please select a effective period  to enable file upload. Only one excel per week/month is allowed.
+            </ng-template>
+          </div>
+        </ui-card-content>
+      </ui-card>
+      <ui-card class="p-4">
+        <ui-card-content>
+          <div class="space-y-6">
+
+
+            <!-- Drop Zone -->
+            <div
+              [class]="getDropZoneClasses()"
+              (dragenter)="handleDragEnter($event)"
+              (dragover)="handleDragOver($event)"
+              (dragleave)="handleDragLeave($event)"
+              (drop)="handleDrop($event)"
+              (click)="openFilePicker()"
+            >
+              <input
+                #fileInputRef
+                type="file"
+                accept=".xlsx,.xls"
+                (change)="handleFileInput($event)"
+                class="hidden"
+              />
+              <div class="space-y-4 max-[991px]:flex max-[991px]:flex-col max-[991px]:items-center max-[991px]:justify-center max-[991px]:gap-4 max-[991px]:space-y-0 max-[991px]:mx-auto">
+                <svg class="mx-auto h-12 w-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+                <div class="text-center">
+                  <span class="block text-subtitle font-medium text-gray-900">Drop Excel file here to upload or</span>
+                  <span class="block text-subtitle font-medium text-nyl-blue underline hover:no-underline cursor-pointer">
+                    Browse
+                  </span>
+                </div>
+                <div class="space-y-1">
+                  <p class="text-content text-gray-500 text-center">
+                    Allowed file:Excel File (.xlsx,.xls).
+                  </p>
+                  <p class="text-content text-gray-400 text-center">
+                    Total Upload Limit:25MB.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- File Queue Summary -->
+            <div *ngIf="files.length > 0" class="space-y-3">
+              <div class="text-center text-sm text-gray-600">
+                File size: <span class="font-medium text-gray-900">{{ totalUploadLimitLabel }}</span>
+              </div>
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-gray-50 rounded-lg">
+                <div class="text-center">
+                  <div class="text-xl font-bold text-gray-700">{{ pendingFiles.length }}</div>
+                  <div class="text-sm text-gray-500">Pending</div>
+                </div>
+                <div class="text-center">
+                  <div class="text-xl font-bold text-blue-600">{{ uploadingFiles.length }}</div>
+                  <div class="text-sm text-gray-500">Uploading</div>
+                </div>
+                <div class="text-center">
+                  <div class="text-xl font-bold text-green-600">{{ uploadedFiles.length }}</div>
+                  <div class="text-sm text-gray-500">Completed</div>
+                </div>
+                <div class="text-center">
+                  <div class="text-xl font-bold text-red-600">{{ errorFiles.length }}</div>
+                  <div class="text-sm text-gray-500">Failed</div>
+                </div>
+              </div>
+            </div>
+
+
+
+            <!-- Uploading Files Section -->
+            <div *ngIf="filteredUploadingFiles.length > 0" class="space-y-4 text-left">
+              <h3 class="font-medium text-gray-900 flex items-center gap-2">
+                <svg class="h-5 w-5 text-blue-600 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Uploading ({{ filteredUploadingFiles.length }})
+              </h3>
+              <div class="space-y-3">
+                <div *ngFor="let file of filteredUploadingFiles" class="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center gap-3">
+                        <span class="text-2xl">{{ getFileIcon(file.type) }}</span>
+                        <div>
+                          <div class="text-sm font-medium text-gray-900">{{ file.name }}</div>
+                          <div class="text-xs text-gray-500">{{ formatFileSize(file.size) }}</div>
+                        </div>
+                      </div>
+                      <div class="text-sm font-medium text-blue-600">{{ file.progress }}%</div>
+                    </div>
+                    <ui-progress [value]="file.progress || 0" class="h-2"></ui-progress>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Uploaded Files Section -->
+            <div *ngIf="latestUploadedFile as file" class="space-y-4 text-left">
+              <h3 class="font-medium text-gray-900 flex items-center gap-2">
+                <svg class="h-5 w-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Uploaded Successfully
+              </h3>
+              <div class="space-y-3">
+                <div class="p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                      <span class="text-2xl">{{ getFileIcon(file.type) }}</span>
+                      <div>
+                        <div class="text-sm font-medium text-gray-900">{{ file.name }}</div>
+                        <div class="text-xs text-gray-500">
+                          {{ formatFileSize(file.size) }} • Uploaded {{ getTimeAgo(file.uploadedAt!) }}
+                        </div>
+                      </div>
+                    </div>
+                    <svg class="h-5 w-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <!-- Error Files Section -->
+            <div *ngIf="filteredErrorFiles.length > 0" class="space-y-4 text-left">
+              <h3 class="font-medium text-gray-900 flex items-center gap-2">
+                <svg class="h-5 w-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Failed Uploads ({{ filteredErrorFiles.length }})
+              </h3>
+              <div class="space-y-3">
+                <div *ngFor="let file of filteredErrorFiles" class="p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                      <span class="text-2xl">{{ getFileIcon(file.type) }}</span>
+                      <div>
+                        <div class="text-sm font-medium text-gray-900">{{ file.name }}</div>
+                        <div class="text-xs text-red-600">{{ file.error }}</div>
+                      </div>
+                    </div>
+                    <div class="flex gap-2">
+                      <ui-button variant="outline" size="sm" (clicked)="retryUpload(file.id)">
+                        Retry
+                      </ui-button>
+                      <button (click)="removeFile(file.id)" class="text-gray-400 hover:text-red-600 p-1">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ui-card-content>
+      </ui-card>
+      <div *ngIf="latestUploadedFile" class="mt-6">
+        <app-upload-history></app-upload-history>
+      </div>
+    </ui-tabs-content>
+
+    <ui-tabs-content value="history" [activeValue]="activeTab">
+      <app-upload-history></app-upload-history>
+    </ui-tabs-content>
+  </ui-tabs>
+</div>

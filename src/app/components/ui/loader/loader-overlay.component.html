@@ -1,0 +1,19 @@
+<ng-container *ngIf="loading.isLoading$ | async">
+  <div class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40">
+    <div class="flex flex-col items-center gap-4">
+      <!-- NYL logo (simple SVG block with text) -->
+      <div class="relative">
+        <div class="">
+          <img
+                    src="https://cdn.builder.io/api/v1/image/assets%2Ff746a3f7e8ba4a429f27b2f7b9f6369c%2F2cb345c978b649c7a595d0ecd0cb3c1d?format=webp&amp;width=800"
+                    alt="New York Life"
+                    class="h-20 w-20 rounded"
+                  />
+        </div>
+        <!-- subtle spinner ring -->
+        <div class="absolute -inset-2 rounded-full border-2 border-white/30 border-t-transparent animate-spin"></div>
+      </div>
+      <div class="text-white text-sm tracking-wide">Loading...</div>
+    </div>
+  </div>
+</ng-container>

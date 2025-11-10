@@ -1,0 +1,12 @@
+
+    <div
+      class="overflow-hidden text-sm transition-all"
+      [class.animate-accordion-down]="isOpen"
+      [class.animate-accordion-up]="!isOpen"
+      [style.display]="isOpen ? 'block' : 'none'"
+    >
+      <div class="pb-4 pt-0">
+        <ng-content></ng-content>
+      </div>
+    </div>
+  

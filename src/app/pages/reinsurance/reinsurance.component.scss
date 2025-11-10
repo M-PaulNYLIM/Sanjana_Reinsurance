@@ -1,0 +1,87 @@
+:host {
+  display: block;
+}
+
+:host ::ng-deep .space-y-6.p-6 > div:first-child {
+  max-width: 72rem;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  text-align: left;
+}
+
+:host ::ng-deep .space-y-6.p-6 > div:first-child > h1 {
+  margin: 0;
+  order: 1;
+  text-align: left;
+  flex: 1 1 auto;
+}
+
+:host ::ng-deep .space-y-6.p-6 > div:first-child > div {
+  margin-bottom: 0;
+  order: 2;
+  display: flex;
+  justify-content: flex-end;
+  flex: 0 0 auto;
+}
+
+:host ::ng-deep .space-y-6.p-6 > div:first-child > div ui-button {
+  margin-left: auto;
+}
+
+:host ::ng-deep ui-button.back-home-btn {
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+:host ::ng-deep ui-button.back-home-btn:hover,
+:host ::ng-deep ui-button.back-home-btn:active,
+:host ::ng-deep ui-button.back-home-btn:focus-visible {
+  color: #ffffff !important;
+}
+
+:host ::ng-deep ui-button.back-home-btn:hover svg,
+:host ::ng-deep ui-button.back-home-btn:active svg,
+:host ::ng-deep ui-button.back-home-btn:focus-visible svg {
+  color: #ffffff !important;
+  stroke: currentColor;
+}
+
+:host ::ng-deep ui-tabs-content[value="reinsurer"] ui-card:first-of-type .grid > div:first-child {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  :host ::ng-deep ui-tabs-content[value="reinsurer"] ui-card:first-of-type .grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Highlight selected reinsurance period row (match Policy Details) */
+.selected-row {
+  background-color: #e6f0f8 !important;
+}
+
+
+/* Mobile period card styles */
+.mobile-period-card {
+  overflow: hidden;
+}
+.mobile-period-card .mobile-field {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  padding: 0.1rem 0;
+}
+.mobile-period-card .mobile-field-label {
+  color: #5b6f84;
+}
+.mobile-period-card .mobile-field-value {
+  color: #1f3d5a;
+  font-weight: 600;
+}
+
+

@@ -1,0 +1,76 @@
+<header class="header">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div class="flex items-center gap-3 md:h-20 min-w-0">
+        <img
+          src="https://cdn.builder.io/api/v1/image/assets%2Ff746a3f7e8ba4a429f27b2f7b9f6369c%2F2cb345c978b649c7a595d0ecd0cb3c1d?format=webp&amp;width=800"
+          alt="New York Life"
+          class="h-12 w-12 rounded"
+        />
+        <div class="flex flex-col leading-tight text-[#0A385E] min-w-0">
+          <h1 class="text-main-title font-semibold whitespace-normal break-words">Reinsurance Administration Portal</h1>
+          <p class="text-content text-[#0A385E]/70">Streamlining Reinsurance Policy Management</p>
+        </div>
+      </div>
+
+      <div class="header-actions" *ngIf="(user$ | async) as user">
+        <ng-container *ngIf="(activeRole$ | async) as activeRole">
+          <ui-dropdown-menu align="end">
+            <div slot="trigger">
+              <ui-button
+                variant="plain"
+                class="header-button header-button--dropdown header-button--borderless flex w-full items-center justify-center gap-2 text-sm font-medium md:w-auto"
+              >
+                <div class="flex flex-col items-start leading-tight">
+                  <span class="font-medium text-sm">{{ user.displayName }}</span>
+                  <span class="text-xs text-gray-500" *ngIf="roleLabel(activeRole)">
+                    {{ roleLabel(activeRole) }}
+                  </span>
+                </div>
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </ui-button>
+            </div>
+
+            <ng-container *ngIf="(roles$ | async) as roles">
+              <ui-dropdown-menu-item
+                class="header-menu-item header-menu-item--section"
+                *ngIf="roles.length > 1"
+                [disabled]="true"
+              >
+                <span class="text-xs font-semibold uppercase tracking-wide text-gray-400">Switch role</span>
+              </ui-dropdown-menu-item>
+              <ui-dropdown-menu-item
+                *ngFor="let role of roles"
+                class="header-menu-item header-menu-item--role"
+                [class.header-menu-item--role-active]="role === activeRole"
+                [disabled]="role === activeRole"
+                (selected)="switchRole(role)"
+              >
+                <span>{{ roleLabel(role) }}</span>
+                <span class="text-xs text-gray-400 ms-1" *ngIf="role === activeRole">(Current)</span>
+              </ui-dropdown-menu-item>
+            </ng-container>
+
+            <ui-dropdown-menu-item class="header-menu-item header-menu-item--logout">
+              <a routerLink="/logout" class="block w-full">
+                <svg
+                  class="logout-icon"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6A2.25 2.25 0 005.25 5.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9l3 3m0 0l-3 3m3-3H3" />
+                </svg>
+                Log Out
+              </a>
+            </ui-dropdown-menu-item>
+          </ui-dropdown-menu>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</header>

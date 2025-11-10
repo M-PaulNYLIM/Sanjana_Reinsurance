@@ -1,0 +1,154 @@
+:host {
+  display: block;
+}
+
+.back-home-btn { color: #4b5563; }
+
+:host ::ng-deep .mat-mdc-form-field { width: 100%; }
+:host ::ng-deep .page-size-field.mat-mdc-form-field { width: 72px !important; min-width: 72px; }
+
+:host ::ng-deep input[type='date'] { line-height: 1.25; padding: 0.5rem 0.75rem; }
+
+/* Cash Flow table horizontal scroll with sticky first column */
+.cashflow-wrap { position: relative; border: 1px solid #d3dae6; border-radius: 0.5rem; }
+
+/* Enforce visible grid outline borders */
+:host ::ng-deep table.nyl-grid-table { border: 1px solid #d3dae6 !important; border-radius: 0.5rem; }
+:host ::ng-deep table.nyl-grid-table:not(.cashflow-table) { overflow: hidden; }
+
+.cashflow-table {
+  min-width: 1200px;
+  border-collapse: separate; /* required for sticky cells in tables */
+  overflow: visible !important; /* override nyl-grid-table */
+}
+
+.cashflow-table .sticky-col,
+.cashflow-table th:first-child,
+.cashflow-table td:first-child {
+  position: sticky;
+  left: 0;
+  background: #ffffff; /* keep same card look */
+  z-index: 2;
+  min-width: 180px;
+  max-width: 220px;
+}
+
+/* Mobile: narrower first column and wrap labels to show more right columns */
+@media (max-width: 640px) {
+  .cashflow-table .sticky-col,
+  .cashflow-table thead th:first-child,
+  .cashflow-table tbody td:first-child {
+    min-width: 120px;
+    max-width: 140px;
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+}
+
+.cashflow-table thead .sticky-col,
+.cashflow-table thead th:first-child {
+  background: #d3dae6; /* match nyl-grid-header */
+  color: #0a385e;
+  z-index: 3;
+}
+
+/* subtle divider to indicate stickiness */
+.cashflow-table .sticky-col,
+.cashflow-table th:first-child,
+.cashflow-table td:first-child {
+  box-shadow: 2px 0 0 0 #e5e7eb;
+}
+
+/* Ensure row separators visible in summary tables */
+.with-row-borders tbody td { border-bottom: 1px solid #e5e7eb; }
+
+/* Highlight selected reinsurance period row */
+.selected-row {
+  background-color: #e6f0f8 !important;
+}
+
+/* Mobile period card styles (match reinsurance) */
+.mobile-period-card {
+  overflow: hidden;
+}
+.mobile-period-card .mobile-field {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  padding: 0.1rem 0;
+}
+.mobile-period-card .mobile-field-label {
+  color: #5b6f84;
+}
+.mobile-period-card .mobile-field-value {
+  color: #1f3d5a;
+  font-weight: 600;
+}
+
+/* compact width for policy number field next to text */
+.policy-number-field { width: auto !important; }
+.policy-number-field.narrow { width: 160px !important; min-width: 160px; }
+
+/* Mobile: stack and make input take full width */
+@media (max-width: 640px) {
+  .policy-number-field,
+  .policy-number-field.narrow {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  /* compact first column padding for more viewport space */
+  .cashflow-table thead th:first-child,
+  .cashflow-table tbody td:first-child {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+}
+
+/* Force-remove inner input border/outline in Angular Material fields on this page */
+:host ::ng-deep .mat-mdc-form-field .mat-mdc-input-element {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Harmonize outlined form field borders and focus color */
+:host ::ng-deep .mat-mdc-form-field {
+  --mdc-outlined-text-field-outline-width: 1px;
+  --mdc-outlined-text-field-outline-color: #d1d5db;
+  --mdc-outlined-text-field-hover-outline-color: #9ca3af;
+  --mdc-outlined-text-field-focus-outline-color: #0a385e; /* NYL navy */
+  --mdc-outlined-text-field-container-fill-color: #ffffff;
+}
+
+/* Remove notch inner right border that can appear as a second line */
+:host ::ng-deep .mat-mdc-form-field-appearance-outline .mdc-notched-outline__notch {
+  border-right: none !important;
+}
+
+/* Alignment rules per finance UI standard */
+.cashflow-table th:not(.sticky-col),
+.cashflow-table td:not(.sticky-col) {
+  text-align: right;
+}
+
+/* Summary Transaction Details: right-align numeric columns */
+.summary-trans-table th:nth-child(3),
+.summary-trans-table th:nth-child(4),
+.summary-trans-table th:nth-child(5),
+.summary-trans-table th:nth-child(6),
+.summary-trans-table th:nth-child(8),
+.summary-trans-table th:nth-child(9),
+.summary-trans-table th:nth-child(10) {
+  text-align: right;
+}
+.summary-trans-table td:nth-child(3),
+.summary-trans-table td:nth-child(4),
+.summary-trans-table td:nth-child(5),
+.summary-trans-table td:nth-child(6),
+.summary-trans-table td:nth-child(8),
+.summary-trans-table td:nth-child(9),
+.summary-trans-table td:nth-child(10) {
+  text-align: right;
+}

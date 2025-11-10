@@ -1,0 +1,15 @@
+<mat-form-field class="w-full" [appearance]="appearance">
+  <mat-label *ngIf="label">{{ label }}</mat-label>
+  <input
+    matInput
+    [type]="type"
+    [placeholder]="placeholder ?? ''"
+    [disabled]="disabled"
+    [readonly]="readonly"
+    [required]="required"
+    [value]="value"
+    (input)="onInput($event)"
+    (blur)="onBlur()"
+    (focus)="onFocus()"
+  />
+</mat-form-field>

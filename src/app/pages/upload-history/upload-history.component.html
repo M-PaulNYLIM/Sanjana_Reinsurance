@@ -1,0 +1,204 @@
+
+      <div class="mx-auto w-full max-w-6xl space-y-8">
+
+            <header class="space-y-2 text-center">
+              <h1 class="text-main-title font-semibold text-gray-900">Upload History</h1>
+              <p class="text-content text-gray-600">
+                Review all rate update uploads with processing status.
+              </p>
+            </header>
+
+            <section class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mt-4" *ngIf="hasAnyRecords()">
+              <div class="rounded-xl bg-white p-3 sm:p-5 shadow-sm transition-shadow hover:shadow">
+                <p class="text-sm font-medium text-gray-500">Total Uploads</p>
+                <p class="mt-2 text-3xl font-semibold text-gray-900">{{ totalUploads }}</p>
+              </div>
+              <div class="rounded-xl bg-white p-3 sm:p-5 shadow-sm transition-shadow hover:shadow">
+                <p class="text-sm font-medium text-gray-500">Processed</p>
+                <p class="mt-2 text-3xl font-semibold text-green-600">{{ processedUploads }}</p>
+              </div>
+              <div class="rounded-xl bg-white p-3 sm:p-5 shadow-sm transition-shadow hover:shadow">
+                <p class="text-sm font-medium text-gray-500">Failed</p>
+                <p class="mt-2 text-3xl font-semibold text-red-600">{{ failedUploads }}</p>
+              </div>
+            </section>
+
+
+        <ui-card class="w-full p-3">
+          <ui-card-content>
+            <form [formGroup]="filterForm" class="grid gap-2 md:grid-cols-4 md:items-end py-2" novalidate (ngSubmit)="onSearch()" (keydown.enter)="onFormEnter($event)">
+              <div
+                class="rounded-lg border border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-700 md:col-span-4"
+                *ngIf="!!(isReadOnly$ | async)"
+              >
+                You are viewing upload history in read-only mode.
+              </div>
+
+              <div>
+                <mat-form-field appearance="outline" class="w-full">
+                  <mat-label>File Name</mat-label>
+                  <input matInput id="search" type="text" formControlName="search" />
+                </mat-form-field>
+              </div>
+
+              <div>
+                <mat-form-field appearance="outline" class="w-full">
+                  <mat-label>Status</mat-label>
+                  <mat-select #statusSelect appMatSelectPositionFix formControlName="status" (keydown.enter)="onSelectEnterFrom(statusSelect, $event)" (keyup.enter)="onSelectEnterUp(statusSelect, $event)" (openedChange)="onSelectOpenedChange(statusSelect, $event)">
+                    <mat-option *ngFor="let option of statusOptions" [value]="option.value">{{ option.label }}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+              <div>
+                <mat-form-field appearance="outline" class="w-full">
+                  <mat-label>Start Date</mat-label>
+                  <input
+                    matInput
+                    [matDatepicker]="startDatePicker"
+                    formControlName="startDate"
+                    (focus)="startDatePicker.open()"
+                    (click)="startDatePicker.open()"
+                  />
+                  <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+                  <mat-datepicker #startDatePicker></mat-datepicker>
+                </mat-form-field>
+              </div>
+
+              <div>
+                <mat-form-field appearance="outline" class="w-full">
+                  <mat-label>End Date</mat-label>
+                  <input
+                    matInput
+                    [matDatepicker]="endDatePicker"
+                    formControlName="endDate"
+                    (focus)="endDatePicker.open()"
+                    (click)="endDatePicker.open()"
+                  />
+                  <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+                  <mat-datepicker #endDatePicker></mat-datepicker>
+                </mat-form-field>
+              </div>
+            </form>
+            <div class="mt-2 flex justify-end gap-1.5 w-full">
+              <ui-button size="sm" class="nyl-primary-action" type="submit" (clicked)="onSearch()" [disabled]="!!(isReadOnly$ | async)">Search</ui-button>
+              <ui-button *ngIf="hasAppliedFilters()" variant="outline" size="sm" class="nyl-cancel-action" (clicked)="clearFilters()" [disabled]="!!(isReadOnly$ | async)">✕ Clear</ui-button>
+            </div>
+          </ui-card-content>
+        </ui-card>
+
+        <ui-card class="w-full p-3" *ngIf="hasAnyRecords()">
+          <ui-card-content>
+            <div class="overflow-x-auto hidden md:block nyl-grid-table rounded-lg">
+              <table class="min-w-full divide-y divide-gray-200 text-sm">
+                <thead class="nyl-grid-header">
+                  <tr>
+                    <th scope="col" class="nyl-grid-header-cell px-6 py-3 text-left font-medium">File Name</th>
+                    <th scope="col" class="nyl-grid-header-cell px-6 py-3 text-left font-medium">Uploaded By</th>
+                    <th scope="col" class="nyl-grid-header-cell px-6 py-3 text-left font-medium">Uploaded On</th>
+                    <th scope="col" class="nyl-grid-header-cell px-6 py-3 text-left font-medium">Effective Period</th>
+                    <th scope="col" class="nyl-grid-header-cell px-6 py-3 text-left font-medium">Status</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                  <tr *ngFor="let record of filteredRecords" class="transition hover:bg-gray-50">
+                    <td class="px-6 py-4">
+                      <div class="flex items-center gap-2">
+                        <span
+                          class="max-w-[180px] truncate font-medium text-gray-900 md:max-w-[260px]"
+                          [attr.title]="record.filename"
+                        >
+                          {{ record.filename }}
+                        </span>
+                        <button
+                          type="button"
+                          (click)="onDownload(record)"
+                          class="rounded-full border border-gray-300 p-1.5 text-gray-500 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
+                          [attr.aria-label]="'Download ' + record.filename"
+                          [disabled]="!!(isReadOnly$ | async)"
+                          [class.opacity-60]="!!(isReadOnly$ | async)"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-4 w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M7.5 10.5l4.5 4.5m0 0 4.5-4.5m-4.5 4.5V3"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 text-gray-700">{{ record.user }}</td>
+                    <td class="px-6 py-4 text-gray-700">
+                      {{ record.timestamp | date: 'MM/dd/yyyy, h:mm a' }}
+                    </td>
+                    <td class="px-6 py-4 text-gray-700">
+                      {{ formatEffectivePeriod(record.weekKey) }}
+                    </td>
+                    <td class="px-6 py-4">
+                      <span
+                        class="inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium"
+                        [ngClass]="{
+                          'border-green-200 bg-green-50 text-green-700':
+                            record.status === 'Processed',
+                          'border-red-200 bg-red-50 text-red-700': record.status === 'Failed',
+                        }"
+                      >
+                        {{ record.status }}
+                      </span>
+                    </td>
+                  </tr>
+
+                  <tr *ngIf="filteredRecords.length === 0">
+                    <td colspan="5" class="px-6 py-10 text-center text-sm text-gray-500">
+                      No uploads found for the selected filters.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="md:hidden mt-3 space-y-2">
+              <div
+                *ngFor="let record of filteredRecords"
+                class="bg-white text-[#1f3d5a] rounded-lg"
+              >
+                <div class="p-3 space-y-1.5">
+                  <div class="flex justify-between text-sm"><span class="text-gray-600">File:</span><span class="font-semibold truncate max-w-[60%]" [title]="record.filename">{{ record.filename }}</span></div>
+                  <div class="flex justify-between text-sm"><span class="text-gray-600">User:</span><span class="font-medium">{{ record.user }}</span></div>
+                  <div class="flex justify-between text-sm"><span class="text-gray-600">Uploaded:</span><span class="font-medium">{{ record.timestamp | date: 'MM/dd/yyyy, h:mm a' }}</span></div>
+                  <div class="flex justify-between text-sm"><span class="text-gray-600">Period:</span><span class="font-medium">{{ formatEffectivePeriod(record.weekKey) }}</span></div>
+                  <div class="flex justify-between text-sm items-center">
+                    <span class="text-gray-600">Status:</span>
+                    <span class="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium"
+                      [ngClass]="{
+                        'border-green-200 bg-green-50 text-green-700': record.status === 'Processed',
+                        'border-red-200 bg-red-50 text-red-700': record.status === 'Failed',
+                      }">
+                      {{ record.status }}
+                    </span>
+                  </div>
+                </div>
+                <div class="flex items-center justify-end gap-2 p-2 border-t border-nyl-blue/15">
+                  <button type="button" class="inline-flex items-center justify-center p-2 text-[#0a385e] transition hover:text-[#114775]" (click)="onDownload(record)">
+                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M7.5 10.5l4.5 4.5m0 0 4.5-4.5m-4.5 4.5V3" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div *ngIf="filteredRecords.length === 0" class="rounded-lg bg-white/60 p-6 text-center text-sm text-gray-500">
+                No uploads found for the selected filters.
+              </div>
+            </div>
+          </ui-card-content>
+        </ui-card>
+      </div>
+

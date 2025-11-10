@@ -1,0 +1,140 @@
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <h1 class="text-main-title font-bold text-nyl-navy">Reinsurance Rates</h1>
+    <a routerLink="/">
+      <ui-button variant="ghost" size="sm" class="flex items-center gap-2 text-gray-600 hover:text-white back-home-btn">
+        ← Back to Home
+      </ui-button>
+    </a>
+  </div>
+
+  <!-- Search Filters (similar to Policy Details) -->
+  <ui-card class="w-full border-0 p-3 shadow-none">
+    <form [formGroup]="form" class="grid gap-2 md:grid-cols-4 md:items-end py-5" novalidate>
+      <div>
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Reinsurer</mat-label>
+          <mat-select appMatSelectPositionFix formControlName="reinsurer">
+            <mat-option value="">All</mat-option>
+            <mat-option *ngFor="let r of distinctReinsurers" [value]="r">{{ r }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Treaty ID</mat-label>
+          <mat-select appMatSelectPositionFix formControlName="treatyId">
+            <mat-option value="">All</mat-option>
+            <mat-option *ngFor="let t of distinctTreatyIds" [value]="t">{{ t }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Start Date</mat-label>
+          <input matInput [matDatepicker]="startPicker" formControlName="startDate" />
+          <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+          <mat-datepicker #startPicker></mat-datepicker>
+          <mat-error *ngIf="form.get('startDate')?.hasError('dateRange') && (form.get('startDate')?.dirty || form.get('startDate')?.touched)">
+            Start Date cannot be after End Date
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>End Date</mat-label>
+          <input matInput [matDatepicker]="endPicker" formControlName="endDate" />
+          <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+          <mat-datepicker #endPicker></mat-datepicker>
+          <mat-error *ngIf="form.get('endDate')?.hasError('dateRange') && (form.get('endDate')?.dirty || form.get('endDate')?.touched)">
+            End Date cannot be before Start Date
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </form>
+    <div class="mt-2 flex justify-end gap-1.5">
+      <ui-button size="sm" class="nyl-primary-action" (clicked)="onSearch()" [disabled]="form.invalid">Search</ui-button>
+      <ui-button *ngIf="hasActiveFilters()" variant="outline" size="sm" class="nyl-cancel-action" (clicked)="clearFilters()">✕ Clear</ui-button>
+    </div>
+  </ui-card>
+
+  <ui-card class="p-4">
+    <ui-card-content>
+      <div class="min-h-[120px]"></div>
+    </ui-card-content>
+  </ui-card>
+
+  <div class="mt-2 flex justify-end gap-1.5 px-3">
+    <ui-button variant="outline" size="sm" (clicked)="exportCurrentView()" [disabled]="totalFiltered === 0">Export current view</ui-button>
+  </div>
+
+  <!-- Grid Section (flat view) -->
+  <ui-card class="p-4">
+    <ui-card-content>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200 text-sm">
+          <thead class="nyl-grid-header">
+            <tr>
+              <th class="nyl-grid-header-cell px-6 py-3 text-left font-medium">Reinsurer ID (NAIC#)</th>
+              <th class="nyl-grid-header-cell px-6 py-3 text-left font-medium">Reinsurer Name</th>
+              <th class="nyl-grid-header-cell px-6 py-3 text-left font-medium">Treaty ID</th>
+              <th class="nyl-grid-header-cell px-6 py-3 text-left font-medium">Quota Share %</th>
+              <th class="nyl-grid-header-cell px-6 py-3 text-left font-medium">Ceding Allowance % Premium (up front)</th>
+              <th class="nyl-grid-header-cell px-6 py-3 text-left font-medium">Ceding Allowance % average AV (monthly)</th>
+              <th class="nyl-grid-header-cell px-6 py-3 text-left font-medium">Expense Allowance % Commission (up front)</th>
+              <th class="nyl-grid-header-cell px-6 py-3 text-left font-medium">Expense Allowance % Premium (up front)</th>
+              <th class="nyl-grid-header-cell px-6 py-3 text-left font-medium">Money Type</th>
+              <th class="nyl-grid-header-cell px-6 py-3 text-left font-medium">Channel</th>
+              <th class="nyl-grid-header-cell px-6 py-3 text-left font-medium">Issue State</th>
+              <th class="nyl-grid-header-cell px-6 py-3 text-left font-medium">Product Name</th>
+              <th class="nyl-grid-header-cell px-6 py-3 text-left font-medium">Product Code</th>
+              <th class="nyl-grid-header-cell px-6 py-3 text-left font-medium">Tenor</th>
+              <th class="nyl-grid-header-cell px-6 py-3 text-left font-medium">Period</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <tr *ngFor="let row of filteredRows" class="transition hover:bg-gray-50">
+              <td class="px-6 py-4">{{ row.reinsurerId }}</td>
+              <td class="px-6 py-4">{{ row.reinsurerName }}</td>
+              <td class="px-6 py-4">{{ row.treatyId }}</td>
+              <td class="px-6 py-4 text-right">{{ formatPercent(row.quotaShare) }}</td>
+              <td class="px-6 py-4 text-right">{{ formatPercent(row.cedingAllowancePrem) }}</td>
+              <td class="px-6 py-4 text-right">{{ formatPercent(row.cedingAllowanceAv) }}</td>
+              <td class="px-6 py-4 text-right">{{ formatPercent(row.expenseAllowanceComm) }}</td>
+              <td class="px-6 py-4 text-right">{{ formatPercent(row.expenseAllowancePrem) }}</td>
+              <td class="px-6 py-4">{{ row.moneyType || '—' }}</td>
+              <td class="px-6 py-4">{{ row.channel || '—' }}</td>
+              <td class="px-6 py-4">{{ row.issueStateCode || '—' }}</td>
+              <td class="px-6 py-4">{{ row.productName }}</td>
+              <td class="px-6 py-4">{{ row.productCode }}</td>
+              <td class="px-6 py-4">{{ row.tenor }}</td>
+              <td class="px-6 py-4">{{ formatPeriod(row.periodStartDate, row.periodEndDate) }}</td>
+            </tr>
+            <tr *ngIf="filteredRows.length === 0">
+              <td colspan="15" class="px-6 py-10 text-center text-sm text-gray-500">No records for selected filters.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm">
+        <div class="flex items-center gap-3">
+          <span>Rows per page</span>
+          <mat-form-field appearance="outline" class="w-[110px]">
+            <mat-select [value]="pageSize" (selectionChange)="setPageSize($event.value)">
+              <mat-option *ngFor="let s of pageSizeOptions" [value]="s">{{ s }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="flex-1 text-center">
+          Page {{ page }} of {{ totalPages }} • {{ totalFiltered }} records
+        </div>
+        <div class="flex items-center gap-2">
+          <ui-button variant="outline" size="sm" (clicked)="prevPage()" [disabled]="page <= 1">Prev</ui-button>
+          <ui-button variant="outline" size="sm" (clicked)="nextPage()" [disabled]="page >= totalPages">Next</ui-button>
+        </div>
+      </div>
+    </ui-card-content>
+  </ui-card>
+</div>

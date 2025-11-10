@@ -1,0 +1,18 @@
+
+    <h3 class="flex">
+      <button
+        type="button"
+        [class]="getTriggerClasses()"
+        (click)="onToggle()"
+        [attr.aria-expanded]="isOpen"
+      >
+        <ng-content></ng-content>
+        <span
+          class="h-4 w-4 shrink-0 transition-transform duration-200"
+          [class.rotate-180]="isOpen"
+        >
+          ▼
+        </span>
+      </button>
+    </h3>
+  

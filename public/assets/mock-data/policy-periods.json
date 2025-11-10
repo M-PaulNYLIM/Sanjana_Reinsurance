@@ -1,0 +1,6 @@
+[
+  { "reinsurerName": "Everlake Life Insurance Company", "treatyId": "01", "reinsuranceId": "60186", "periodType": "Month", "periodStartDate": "2025-09-01", "periodEndDate": "2025-09-30" },
+  { "reinsurerName": "Everlake Life Insurance Company", "treatyId": "01", "reinsuranceId": "60186", "periodType": "Week",  "periodStartDate": "2025-10-20", "periodEndDate": "2025-10-26" },
+  { "reinsurerName": "Everlake Life Insurance Company", "treatyId": "01", "reinsuranceId": "60186", "periodType": "Month", "periodStartDate": "2025-10-01", "periodEndDate": "2025-10-31" },
+  { "reinsurerName": "Guardian Re Partners",            "treatyId": "02", "reinsuranceId": "78910", "periodType": "Month", "periodStartDate": "2025-10-01", "periodEndDate": "2025-10-31" }
+]

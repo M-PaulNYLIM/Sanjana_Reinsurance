@@ -1,0 +1,279 @@
+<div class="w-full space-y-2.5">
+  <ng-container *ngIf="treaties.length; else emptyTreatyState">
+  <div class="flex items-center justify-between mb-2">
+    <div class="text-sm text-gray-600">Total records:<span class="font-semibold"> {{ treaties.length }}</span></div>
+    <ui-button
+      variant="outline"
+      size="sm"
+      class="whitespace-nowrap"
+      (click)="collapseAllReinsurers()"
+      [disabled]="!hasAnyReinsurerExpanded()"
+    >
+      Collapse All
+    </ui-button>
+  </div>
+  <ui-accordion type="multiple" #reinsurerAccordion>
+    <ui-accordion-item
+      *ngFor="let reinsurer of getReinsurers()"
+      [value]="reinsurer"
+      className="mb-3 rounded-lg border border-nyl-navy/15 bg-[#fcfcfc]"
+    >
+      <ui-accordion-trigger
+        [accordion]="reinsurerAccordion"
+        [value]="reinsurer"
+        className="w-full rounded-t-lg px-4 py-3 transition-colors hover:bg-nyl-light-blue/40"
+      >
+        <div class="w-full space-y-1">
+          <div class="flex w-full items-center justify-between gap-3">
+            <span class="text-lg font-semibold text-nyl-navy">{{ reinsurer }}</span>
+            <span class="text-sm text-gray-500">{{ getProductGroupsFor(reinsurer).length }} products</span>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="inline-flex items-center gap-1 rounded-full bg-nyl-navy/10 px-2 py-1 text-xs font-medium text-nyl-navy">
+              NAIC {{ getReinsurerNaic(reinsurer) }}
+            </span>
+            <span class="inline-flex items-center gap-1 rounded-full bg-nyl-navy/10 px-2 py-1 text-xs font-medium text-nyl-navy">
+              Treaty {{ getReinsurerTreaty(reinsurer) }}
+            </span>
+          </div>
+        </div>
+      </ui-accordion-trigger>
+      <ui-accordion-content [accordion]="reinsurerAccordion" [value]="reinsurer">
+        <div class="space-y-2.5">
+          <div
+            *ngFor="let p of getProductGroupsFor(reinsurer)"
+            class="rounded-lg"
+            [ngClass]="{ 'border border-nyl-blue/15 bg-gray-50 shadow-sm': !isBlankProduct(p.key) }"
+          >
+            <div class="relative">
+              <button
+                class="flex w-full items-center justify-between rounded-t-lg px-4 py-3 text-left transition-colors hover:bg-nyl-light-blue/50"
+                (click)="toggleProductOpen(p.key)"
+              >
+                <div class="flex flex-col gap-1">
+                  <div class="text-[15px] font-semibold leading-tight text-nyl-blue">
+                    {{ p.productName }}
+                  </div>
+                  <ng-container *ngIf="!isBlankProduct(p.key) && getActivePeriodForProduct(p.key, p.periods) as headerPeriod">
+                    <div class="flex flex-wrap items-center gap-2 text-xs font-medium text-[#1f3d5a]">
+                      <span>
+                        <span class="font-semibold text-[#1a3a5f]">Product Code:</span>
+                        <span class="ml-1 text-[#1a3a5f]">{{ getProductCodeForPeriod(headerPeriod) || '—' }}</span>
+                      </span>
+                    </div>
+                  </ng-container>
+                  <ng-container *ngIf="!isBlankProduct(p.key) && p.tenorList.length > 0">
+                    <div class="flex flex-wrap items-center gap-1 text-xs text-[#1a3a5f]">
+                      <span class="font-semibold">Tenors:</span>
+                      <div class="flex flex-wrap gap-1">
+                        <span
+                          *ngFor="let tenor of p.tenorList"
+                          class="inline-flex items-center rounded-full bg-nyl-light-blue/60 px-2 py-0.5 text-[11px] font-medium text-[#1a3a5f]"
+                        >
+                          {{ tenor }}
+                        </span>
+                      </div>
+                    </div>
+                  </ng-container>
+                  <!-- <ng-container *ngIf="!isBlankProduct(p.key)">
+                    <div
+                      class="flex flex-wrap items-center gap-2 text-xs text-[#5b6f84]"
+                      *ngIf="getVisibleCounts(p.key, p.periods) as summary"
+                      [class.hidden]="summary.recordCount === 0"
+                    >
+                      <span>{{ summary.periodCount }} periods</span>
+                    </div>
+                  </ng-container> -->
+                </div>
+                <svg
+                  *ngIf="!isBlankProduct(p.key)"
+                  class="h-4 w-4 text-gray-500 transition-transform"
+                  [class.rotate-180]="isProductOpen(p.key)"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+            </div>
+            <div *ngIf="isProductOpen(p.key) && !isBlankProduct(p.key) && p.periods.length > 0" class="px-2.5 pb-2.5">
+              <ng-container *ngIf="getActivePeriodForProduct(p.key, p.periods) as activePeriod">
+                <ng-container *ngIf="groupTreatiesByTenor(activePeriod.treaties) as tenorGroups">
+                  <div class="space-y-2.5" *ngIf="tenorGroups.length; else noTenorData">
+                    <div class="flex items-center justify-end gap-2">
+                      <ui-button
+                        variant="plain"
+                        size="sm"
+                        type="button"
+                        class="text-xs font-semibold text-[#1a3a5f]"
+                        (click)="expandAllTenorGroups(p.key, activePeriod, tenorGroups)"
+                        [disabled]="areAllTenorGroupsOpen(p.key, activePeriod, tenorGroups)"
+                      >
+                        Expand All
+                      </ui-button>
+                      <ui-button
+                        variant="plain"
+                        size="sm"
+                        type="button"
+                        class="text-xs font-semibold text-[#1a3a5f]"
+                        (click)="collapseAllTenorGroups(p.key, activePeriod, tenorGroups)"
+                        [disabled]="areAllTenorGroupsCollapsed(p.key, activePeriod, tenorGroups)"
+                      >
+                        Collapse All
+                      </ui-button>
+                    </div>
+                    <div
+                      *ngFor="let tenorGroup of tenorGroups; trackBy: trackByTenorLabel"
+                      class="overflow-hidden rounded-lg border border-nyl-blue/15 bg-white shadow-sm"
+                    >
+                      <button
+                        type="button"
+                        class="flex w-full items-center justify-between gap-2 bg-nyl-light-blue/35 px-3 py-2 text-left transition hover:bg-nyl-light-blue/50"
+                        (click)="toggleTenorGroup(p.key, activePeriod, tenorGroup.tenor)"
+                      >
+                        <div class="flex flex-wrap items-center gap-2">
+                          <span class="text-sm font-semibold text-[#1a3a5f]">Tenor {{ tenorGroup.tenor || 'N/A' }}</span>
+                          <span class="text-xs text-[#5b6f84]">{{ tenorGroup.records.length }} treaties</span>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-3 text-xs text-[#1f3d5a]">
+                          <svg
+                            class="h-4 w-4 text-[#1f3d5a] transition-transform"
+                            [class.rotate-180]="isTenorGroupOpen(p.key, activePeriod, tenorGroup.tenor)"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </div>
+                      </button>
+                      <div *ngIf="isTenorGroupOpen(p.key, activePeriod, tenorGroup.tenor)" class="tenor-group-wrapper mt-4 mb-4">
+                        <div class="desktop-grid-table-wrapper">
+                          <div class="overflow-x-auto">
+                            <table class="nyl-grid-table mx-auto w-[88%] table-fixed text-xs leading-tight">
+                              <thead class="nyl-grid-header">
+                                <tr>
+                                  <th class="nyl-grid-header-cell px-1 py-2 text-left font-semibold whitespace-nowrap treaty-col treaty-col--territory">Territory</th>
+                                  <th class="nyl-grid-header-cell px-1 py-2 text-left font-semibold whitespace-nowrap treaty-col treaty-col--money">Money Type</th>
+                                  <th class="nyl-grid-header-cell px-1 py-2 text-left font-semibold whitespace-nowrap treaty-col treaty-col--channel">Channel</th>
+                                  <th class="nyl-grid-header-cell px-1 py-2 text-right font-semibold whitespace-nowrap treaty-col treaty-col--quote">Quote Share %</th>
+                                  <th class="nyl-grid-header-cell px-1 py-2 text-center font-semibold whitespace-nowrap treaty-col treaty-col--action">Action</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr
+                                  *ngFor="let treaty of tenorGroup.records; trackBy: trackByTreatyRow"
+                                  class="odd:bg-white even:bg-nyl-light-blue/15 border-b border-nyl-blue/10 text-[#1f3d5a]"
+                                  [ngClass]="{ 'activated-row': isActiveTreaty(treaty) }"
+                                >
+                                  <td class="px-1 py-2 text-left pl-2 treaty-col treaty-col--territory">{{ treaty.issueStateCode || '—' }}</td>
+                                  <td class="px-1 py-2 text-left treaty-col treaty-col--money">{{ treaty.moneyType || '—' }}</td>
+                                  <td class="px-1 py-2 text-left treaty-col treaty-col--channel">{{ treaty.channel || '—' }}</td>
+                                  <td class="px-1 py-2 text-right treaty-col treaty-col--quote">{{ formatPercentDisplay(treaty.quotaShare) }}</td>
+                                  <td class="px-1 py-2 text-center treaty-col treaty-col--action">
+                                    <div class="flex items-center justify-center gap-2">
+                                      <button
+                                        type="button"
+                                        class="inline-flex items-center justify-center p-1 text-[#0a385e] transition hover:text-[#114775]"
+                                        (click)="onViewTreaty(treaty, activePeriod, $event)"
+                                      >
+                                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                          <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                        <span class="sr-only">View treaty details</span>
+                                      </button>
+                                      <button
+                                        *ngIf="isLatestWeekPeriod(activePeriod)"
+                                        type="button"
+                                        class="inline-flex items-center justify-center p-1 text-[#0a385e] transition hover:text-[#114775]"
+                                        (click)="onEditTreaty(treaty, activePeriod, $event)"
+                                      >
+                                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                                          <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487a2.25 2.25 0 013.182 3.182l-9.722 9.722a2.25 2.25 0 01-.977.563l-3.176.937.937-3.176a2.25 2.25 0 01.563-.977l9.722-9.722z" />
+                                          <path stroke-linecap="round" stroke-linejoin="round" d="M19.435 7.06l-2.775-2.775" />
+                                        </svg>
+                                        <span class="sr-only">Edit treaty</span>
+                                      </button>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                        <div class="mobile-treaty-list">
+                          <div
+                            *ngFor="let treaty of tenorGroup.records; trackBy: trackByTreatyRow"
+                            class="mobile-treaty-card border nyl-dark-grey bg-white text-[#1f3d5a]"
+                            [ngClass]="{ 'mobile-treaty-card--active': isActiveTreaty(treaty) }"
+                          >
+                            <div class="mobile-treaty-card__content">
+                              <div class="mobile-treaty-field">
+                                <span class="mobile-treaty-field-label">Territory:</span>
+                                <span class="mobile-treaty-field-value">{{ treaty.issueStateCode || '—' }}</span>
+                              </div>
+                              <div class="mobile-treaty-field">
+                                <span class="mobile-treaty-field-label">Money Type:</span>
+                                <span class="mobile-treaty-field-value">{{ treaty.moneyType || '—' }}</span>
+                              </div>
+                              <div class="mobile-treaty-field">
+                                <span class="mobile-treaty-field-label">Channel:</span>
+                                <span class="mobile-treaty-field-value">{{ treaty.channel || '—' }}</span>
+                              </div>
+                              <div class="mobile-treaty-field">
+                                <span class="mobile-treaty-field-label">Quote Share %:</span>
+                                <span class="mobile-treaty-field-value">{{ formatPercentDisplay(treaty.quotaShare) }}</span>
+                              </div>
+                            </div>
+                            <div class="mobile-treaty-card__actions">
+                              <button
+                                type="button"
+                                class="inline-flex items-center justify-center p-2 text-[#0a385e] transition hover:text-[#114775]"
+                                (click)="onViewTreaty(treaty, activePeriod, $event)"
+                                aria-label="View treaty details"
+                              >
+                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                              </button>
+                              <button
+                                *ngIf="isLatestWeekPeriod(activePeriod)"
+                                type="button"
+                                class="inline-flex items-center justify-center p-2 text-[#0a385e] transition hover:text-[#114775]"
+                                (click)="onEditTreaty(treaty, activePeriod, $event)"
+                                aria-label="Edit treaty"
+                              >
+                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                                  <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487a2.25 2.25 0 013.182 3.182l-9.722 9.722a2.25 2.25 0 01-.977.563l-3.176.937.937-3.176a2.25 2.25 0 01.563-.977l9.722-9.722z" />
+                                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.435 7.06l-2.775-2.775" />
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <ng-template #noTenorData>
+                    <div class="rounded-lg border border-dashed border-nyl-blue/20 bg-white/60 px-4 py-6 text-center text-xs text-[#5b6f84]">
+                      No treaty data available for the selected period.
+                    </div>
+                  </ng-template>
+                </ng-container>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </ui-accordion-content>
+    </ui-accordion-item>
+  </ui-accordion>
+</ng-container>
+<ng-template #emptyTreatyState>
+  <div class="rounded-lg border border-dashed border-nyl-blue/20 bg-white/60 px-4 py-6 text-center text-sm text-[#5b6f84]">
+    No treaties match the selected filters.
+  </div>
+</ng-template>
+</div>

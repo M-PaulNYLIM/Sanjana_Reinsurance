@@ -1,0 +1,11 @@
+
+    <div class="relative inline-block" #dropdownContainer>
+      <div (click)="toggleDropdown()" #trigger>
+        <ng-content select="[slot=trigger]"></ng-content>
+      </div>
+
+      <div *ngIf="isOpen" [class]="getContentClasses()">
+        <ng-content></ng-content>
+      </div>
+    </div>
+  

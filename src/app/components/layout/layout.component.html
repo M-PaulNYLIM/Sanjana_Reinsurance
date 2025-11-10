@@ -1,0 +1,25 @@
+<div class="min-h-screen bg-nyl-light-blue">
+  <app-header></app-header>
+
+  <nav class="bg-white border-b border-gray-200" *ngIf="(navItems$ | async) as navItems">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="flex items-center justify-start overflow-x-auto">
+        <div class="flex flex-nowrap items-center gap-6 py-3 min-w-max">
+          <a
+            *ngFor="let item of navItems"
+            [routerLink]="item.path"
+            [class]="getNavLinkClasses(item.path)"
+          >
+            {{ item.label }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto px-6 py-5">
+    <router-outlet></router-outlet>
+  </main>
+
+  <app-footer></app-footer>
+</div>

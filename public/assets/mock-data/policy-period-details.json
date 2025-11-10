@@ -1,0 +1,487 @@
+{
+  "details": [
+    {
+      "reinsurerName": "Everlake Life Insurance Company",
+      "treatyId": "01",
+      "periodType": "Month",
+      "periodStartDate": "2025-09-01",
+      "periodEndDate": "2025-09-30",
+      "policyNumbers": ["P1001", "P1002"],
+      "transactions": [
+        { "policyNumber": "P1001", "processDate": "2025-09-10", "transactionType": "Premium Payment", "amount": 5000, "category": "PREMIUMS", "reinsuredShare": 0.67 },
+        { "policyNumber": "P1001", "processDate": "2025-09-20", "transactionType": "Fee", "amount": 50, "feeAmount": 50, "category": "Fee", "reinsuredShare": 0.5 },
+        { "policyNumber": "P1002", "processDate": "2025-09-15", "transactionType": "Premium Payment", "amount": 3000, "category": "PREMIUMS", "reinsuredShare": 0.67 }
+      ],
+      "summaryCashFlow": {
+        "total": {
+          "Premiums": 8000,
+          "Annuitization": 0,
+          "Partial Surrender": 0,
+          "Full Surrender": 0,
+          "Surrender Fees - Full": 0,
+          "Surrender Fees - Partial": 0,
+          "MVA Fees": 0,
+          "Fees (all except Surrender and MVA)": 50,
+          "Interest": 0,
+          "Commission Amount": 0,
+          "Death Payments (Cash)": 0,
+          "Interest on Claims (Cash)": 0
+        },
+        "reinsured": {
+          "Premiums": 5000,
+          "Annuitization": 0,
+          "Partial Surrender": 0,
+          "Full Surrender": 0,
+          "Surrender Fees - Full": 0,
+          "Surrender Fees - Partial": 0,
+          "MVA Fees": 0,
+          "Fees (all except Surrender and MVA)": 25,
+          "Interest": 0,
+          "Commission Amount": 0,
+          "Death Payments (Cash)": 0,
+          "Interest on Claims (Cash)": 0
+        }
+      },
+      "policyCashFlow": {
+        "P1001": {
+          "total": {
+            "Premiums": 5000,
+            "Annuitization": 0,
+            "Partial Surrender": 0,
+            "Full Surrender": 0,
+            "Surrender Fees - Full": 0,
+            "Surrender Fees - Partial": 0,
+            "MVA Fees": 0,
+            "Fees (all except Surrender and MVA)": 50,
+            "Interest": 0,
+            "Commission Amount": 0,
+            "Death Payments (Cash)": 0,
+            "Interest on Claims (Cash)": 0
+          },
+          "reinsured": {
+            "Premiums": 3350,
+            "Annuitization": 0,
+            "Partial Surrender": 0,
+            "Full Surrender": 0,
+            "Surrender Fees - Full": 0,
+            "Surrender Fees - Partial": 0,
+            "MVA Fees": 0,
+            "Fees (all except Surrender and MVA)": 25,
+            "Interest": 0,
+            "Commission Amount": 0,
+            "Death Payments (Cash)": 0,
+            "Interest on Claims (Cash)": 0
+          }
+        },
+        "P1002": {
+          "total": {
+            "Premiums": 3000,
+            "Annuitization": 0,
+            "Partial Surrender": 0,
+            "Full Surrender": 0,
+            "Surrender Fees - Full": 0,
+            "Surrender Fees - Partial": 0,
+            "MVA Fees": 0,
+            "Fees (all except Surrender and MVA)": 0,
+            "Interest": 0,
+            "Commission Amount": 0,
+            "Death Payments (Cash)": 0,
+            "Interest on Claims (Cash)": 0
+          },
+          "reinsured": {
+            "Premiums": 1650,
+            "Annuitization": 0,
+            "Partial Surrender": 0,
+            "Full Surrender": 0,
+            "Surrender Fees - Full": 0,
+            "Surrender Fees - Partial": 0,
+            "MVA Fees": 0,
+            "Fees (all except Surrender and MVA)": 0,
+            "Interest": 0,
+            "Commission Amount": 0,
+            "Death Payments (Cash)": 0,
+            "Interest on Claims (Cash)": 0
+          }
+        }
+      },
+      "policySummaries": {
+        "P1001": {
+          "policyNumber": "P1001",
+          "policyIssueDate": "2025-10-01",
+          "appSignDate": "2025-09-28",
+          "reinsuranceId": "RI-1001",
+          "treatyId": "01",
+          "reinsurerName": "Everlake Life Insurance Company",
+          "reinsuranceStartDate": "2025-10-05",
+          "reinsuranceEndDate": "2026-10-05",
+          "rateLockDate": "2025-09-30"
+        },
+        "P1002": {
+          "policyNumber": "P1002",
+          "policyIssueDate": "2025-10-03",
+          "appSignDate": "2025-09-30",
+          "reinsuranceId": "RI-1002",
+          "treatyId": "01",
+          "reinsurerName": "Everlake Life Insurance Company",
+          "reinsuranceStartDate": "2025-10-07",
+          "reinsuranceEndDate": "2026-10-07",
+          "rateLockDate": "2025-10-03"
+        }
+      }
+    },
+    {
+      "reinsurerName": "Everlake Life Insurance Company",
+      "treatyId": "01",
+      "periodType": "Week",
+      "periodStartDate": "2025-10-20",
+      "periodEndDate": "2025-10-26",
+      "policyNumbers": ["P1001", "P1002"],
+      "transactions": [
+        { "policyNumber": "P1001", "processDate": "2025-10-10", "transactionType": "Surrender", "amount": 1200, "category": "SURRENDER", "surrenderCharge": 450, "reinsuredShare": 0.5 },
+        { "policyNumber": "P1001", "processDate": "2025-10-26", "transactionType": "MVA Adjustment", "amount": 0, "mvdAdjAmount": 120, "category": "MVA Adj", "reinsuredShare": 0.5 },
+        { "policyNumber": "P1002", "processDate": "2025-10-20", "transactionType": "Annuitization", "amount": 2000, "category": "Annuitization", "reinsuredShare": 0.5 },
+        { "policyNumber": "P1002", "processDate": "2025-10-08", "transactionType": "Fee", "amount": 150, "feeAmount": 150, "category": "Fee", "reinsuredShare": 0.5 },
+        { "policyNumber": "P1002", "processDate": "2025-10-10", "transactionType": "Death", "amount": 800, "category": "Death", "deathClaimInterest": 200, "deathClaimBenefitAmount": 9800, "reinsuredShare": 0.8 },
+        { "policyNumber": "P1002", "processDate": "2025-10-26", "transactionType": "Interest", "amount": 180, "category": "Interest", "reinsuredShare": 0.6 },
+        { "policyNumber": "P1002", "processDate": "2025-10-26", "transactionType": "Commission", "amount": 0, "commission": 100, "category": "Commission", "reinsuredShare": 0.5 }
+      ],
+      "summaryCashFlow": {
+        "total": {
+          "Premiums": 0,
+          "Annuitization": 2000,
+          "Partial Surrender": 0,
+          "Full Surrender": 1200,
+          "Surrender Fees - Full": 450,
+          "Surrender Fees - Partial": 0,
+          "MVA Fees": 120,
+          "Fees (all except Surrender and MVA)": 150,
+          "Interest": 180,
+          "Commission Amount": 100,
+          "Death Payments (Cash)": 800,
+          "Interest on Claims (Cash)": 200
+        },
+        "reinsured": {
+          "Premiums": 0,
+          "Annuitization": 1000,
+          "Partial Surrender": 0,
+          "Full Surrender": 600,
+          "Surrender Fees - Full": 225,
+          "Surrender Fees - Partial": 0,
+          "MVA Fees": 60,
+          "Fees (all except Surrender and MVA)": 75,
+          "Interest": 108,
+          "Commission Amount": 50,
+          "Death Payments (Cash)": 640,
+          "Interest on Claims (Cash)": 160
+        }
+      },
+      "policyCashFlow": {
+        "P1001": {
+          "total": {
+            "Premiums": 0,
+            "Annuitization": 0,
+            "Partial Surrender": 0,
+            "Full Surrender": 1200,
+            "Surrender Fees - Full": 450,
+            "Surrender Fees - Partial": 0,
+            "MVA Fees": 120,
+            "Fees (all except Surrender and MVA)": 0,
+            "Interest": 0,
+            "Commission Amount": 0,
+            "Death Payments (Cash)": 0,
+            "Interest on Claims (Cash)": 0
+          },
+          "reinsured": {
+            "Premiums": 0,
+            "Annuitization": 0,
+            "Partial Surrender": 0,
+            "Full Surrender": 600,
+            "Surrender Fees - Full": 225,
+            "Surrender Fees - Partial": 0,
+            "MVA Fees": 60,
+            "Fees (all except Surrender and MVA)": 0,
+            "Interest": 0,
+            "Commission Amount": 0,
+            "Death Payments (Cash)": 0,
+            "Interest on Claims (Cash)": 0
+          }
+        },
+        "P1002": {
+          "total": {
+            "Premiums": 0,
+            "Annuitization": 2000,
+            "Partial Surrender": 0,
+            "Full Surrender": 0,
+            "Surrender Fees - Full": 0,
+            "Surrender Fees - Partial": 0,
+            "MVA Fees": 0,
+            "Fees (all except Surrender and MVA)": 150,
+            "Interest": 180,
+            "Commission Amount": 100,
+            "Death Payments (Cash)": 800,
+            "Interest on Claims (Cash)": 200
+          },
+          "reinsured": {
+            "Premiums": 0,
+            "Annuitization": 1000,
+            "Partial Surrender": 0,
+            "Full Surrender": 0,
+            "Surrender Fees - Full": 0,
+            "Surrender Fees - Partial": 0,
+            "MVA Fees": 0,
+            "Fees (all except Surrender and MVA)": 75,
+            "Interest": 108,
+            "Commission Amount": 50,
+            "Death Payments (Cash)": 640,
+            "Interest on Claims (Cash)": 160
+          }
+        }
+      },
+      "policySummaries": {
+        "P1001": {
+          "policyNumber": "P1001",
+          "policyIssueDate": "2025-10-01",
+          "appSignDate": "2025-09-28",
+          "reinsuranceId": "RI-1001",
+          "treatyId": "01",
+          "reinsurerName": "Everlake Life Insurance Company",
+          "reinsuranceStartDate": "2025-10-05",
+          "reinsuranceEndDate": "2026-10-05",
+          "rateLockDate": "2025-09-30"
+        },
+        "P1002": {
+          "policyNumber": "P1002",
+          "policyIssueDate": "2025-10-03",
+          "appSignDate": "2025-09-30",
+          "reinsuranceId": "RI-1002",
+          "treatyId": "01",
+          "reinsurerName": "Everlake Life Insurance Company",
+          "reinsuranceStartDate": "2025-10-07",
+          "reinsuranceEndDate": "2026-10-07",
+          "rateLockDate": "2025-10-03"
+        }
+      }
+    },
+    {
+      "reinsurerName": "Everlake Life Insurance Company",
+      "treatyId": "01",
+      "periodType": "Month",
+      "periodStartDate": "2025-10-01",
+      "periodEndDate": "2025-10-31",
+      "policyNumbers": ["P1001", "P1002"],
+      "transactions": [
+        { "policyNumber": "P1001", "processDate": "2025-10-05", "transactionType": "Partial Surrender", "amount": 2500, "category": "PARTIAL SURRENDER", "partialSurrenderCharge": 300, "reinsuredShare": 0.5 },
+        { "policyNumber": "P1001", "processDate": "2025-10-10", "transactionType": "Surrender", "amount": 1200, "category": "SURRENDER", "surrenderCharge": 450, "reinsuredShare": 0.5 },
+        { "policyNumber": "P1001", "processDate": "2025-10-26", "transactionType": "MVA Adjustment", "amount": 0, "mvdAdjAmount": 120, "category": "MVA Adj", "reinsuredShare": 0.5 },
+        { "policyNumber": "P1002", "processDate": "2025-10-20", "transactionType": "Annuitization", "amount": 2000, "category": "Annuitization", "reinsuredShare": 0.5 },
+        { "policyNumber": "P1002", "processDate": "2025-10-08", "transactionType": "Fee", "amount": 150, "feeAmount": 150, "category": "Fee", "reinsuredShare": 0.5 },
+        { "policyNumber": "P1002", "processDate": "2025-10-10", "transactionType": "Death", "amount": 800, "category": "Death", "deathClaimInterest": 200, "deathClaimBenefitAmount": 9800, "reinsuredShare": 0.8 },
+        { "policyNumber": "P1002", "processDate": "2025-10-26", "transactionType": "Interest", "amount": 180, "category": "Interest", "reinsuredShare": 0.6 },
+        { "policyNumber": "P1002", "processDate": "2025-10-26", "transactionType": "Commission", "amount": 0, "commission": 100, "category": "Commission", "reinsuredShare": 0.5 }
+      ],
+      "summaryCashFlow": {
+        "total": {
+          "Premiums": 0,
+          "Annuitization": 2000,
+          "Partial Surrender": 2500,
+          "Full Surrender": 1200,
+          "Surrender Fees - Full": 450,
+          "Surrender Fees - Partial": 300,
+          "MVA Fees": 120,
+          "Fees (all except Surrender and MVA)": 150,
+          "Interest": 180,
+          "Commission Amount": 100,
+          "Death Payments (Cash)": 800,
+          "Interest on Claims (Cash)": 200
+        },
+        "reinsured": {
+          "Premiums": 0,
+          "Annuitization": 1000,
+          "Partial Surrender": 1250,
+          "Full Surrender": 600,
+          "Surrender Fees - Full": 225,
+          "Surrender Fees - Partial": 150,
+          "MVA Fees": 60,
+          "Fees (all except Surrender and MVA)": 75,
+          "Interest": 108,
+          "Commission Amount": 50,
+          "Death Payments (Cash)": 640,
+          "Interest on Claims (Cash)": 160
+        }
+      },
+      "policyCashFlow": {
+        "P1001": {
+          "total": {
+            "Premiums": 0,
+            "Annuitization": 0,
+            "Partial Surrender": 2500,
+            "Full Surrender": 1200,
+            "Surrender Fees - Full": 450,
+            "Surrender Fees - Partial": 300,
+            "MVA Fees": 120,
+            "Fees (all except Surrender and MVA)": 0,
+            "Interest": 0,
+            "Commission Amount": 0,
+            "Death Payments (Cash)": 0,
+            "Interest on Claims (Cash)": 0
+          },
+          "reinsured": {
+            "Premiums": 0,
+            "Annuitization": 0,
+            "Partial Surrender": 1250,
+            "Full Surrender": 600,
+            "Surrender Fees - Full": 225,
+            "Surrender Fees - Partial": 150,
+            "MVA Fees": 60,
+            "Fees (all except Surrender and MVA)": 0,
+            "Interest": 0,
+            "Commission Amount": 0,
+            "Death Payments (Cash)": 0,
+            "Interest on Claims (Cash)": 0
+          }
+        },
+        "P1002": {
+          "total": {
+            "Premiums": 0,
+            "Annuitization": 2000,
+            "Partial Surrender": 0,
+            "Full Surrender": 0,
+            "Surrender Fees - Full": 0,
+            "Surrender Fees - Partial": 0,
+            "MVA Fees": 0,
+            "Fees (all except Surrender and MVA)": 150,
+            "Interest": 180,
+            "Commission Amount": 100,
+            "Death Payments (Cash)": 800,
+            "Interest on Claims (Cash)": 200
+          },
+          "reinsured": {
+            "Premiums": 0,
+            "Annuitization": 1000,
+            "Partial Surrender": 0,
+            "Full Surrender": 0,
+            "Surrender Fees - Full": 0,
+            "Surrender Fees - Partial": 0,
+            "MVA Fees": 0,
+            "Fees (all except Surrender and MVA)": 75,
+            "Interest": 108,
+            "Commission Amount": 50,
+            "Death Payments (Cash)": 640,
+            "Interest on Claims (Cash)": 160
+          }
+        }
+      },
+      "policySummaries": {
+        "P1001": {
+          "policyNumber": "P1001",
+          "policyIssueDate": "2025-10-01",
+          "appSignDate": "2025-09-28",
+          "reinsuranceId": "RI-1001",
+          "treatyId": "01",
+          "reinsurerName": "Everlake Life Insurance Company",
+          "reinsuranceStartDate": "2025-10-05",
+          "reinsuranceEndDate": "2026-10-05",
+          "rateLockDate": "2025-09-30"
+        },
+        "P1002": {
+          "policyNumber": "P1002",
+          "policyIssueDate": "2025-10-03",
+          "appSignDate": "2025-09-30",
+          "reinsuranceId": "RI-1002",
+          "treatyId": "01",
+          "reinsurerName": "Everlake Life Insurance Company",
+          "reinsuranceStartDate": "2025-10-07",
+          "reinsuranceEndDate": "2026-10-07",
+          "rateLockDate": "2025-10-03"
+        }
+      }
+    },
+    {
+      "reinsurerName": "Guardian Re Partners",
+      "treatyId": "02",
+      "periodType": "Month",
+      "periodStartDate": "2025-10-01",
+      "periodEndDate": "2025-10-31",
+      "policyNumbers": ["P1005"],
+      "transactions": [
+        { "policyNumber": "P1005", "processDate": "2025-10-15", "transactionType": "Premium Payment", "amount": 2000, "category": "PREMIUMS", "reinsuredShare": 0.75 },
+        { "policyNumber": "P1005", "processDate": "2025-10-20", "transactionType": "Interest", "amount": 90, "category": "Interest", "reinsuredShare": 0.5 }
+      ],
+      "summaryCashFlow": {
+        "total": {
+          "Premiums": 2000,
+          "Annuitization": 0,
+          "Partial Surrender": 0,
+          "Full Surrender": 0,
+          "Surrender Fees - Full": 0,
+          "Surrender Fees - Partial": 0,
+          "MVA Fees": 0,
+          "Fees (all except Surrender and MVA)": 0,
+          "Interest": 90,
+          "Commission Amount": 0,
+          "Death Payments (Cash)": 0,
+          "Interest on Claims (Cash)": 0
+        },
+        "reinsured": {
+          "Premiums": 1500,
+          "Annuitization": 0,
+          "Partial Surrender": 0,
+          "Full Surrender": 0,
+          "Surrender Fees - Full": 0,
+          "Surrender Fees - Partial": 0,
+          "MVA Fees": 0,
+          "Fees (all except Surrender and MVA)": 0,
+          "Interest": 45,
+          "Commission Amount": 0,
+          "Death Payments (Cash)": 0,
+          "Interest on Claims (Cash)": 0
+        }
+      },
+      "policyCashFlow": {
+        "P1005": {
+          "total": {
+            "Premiums": 2000,
+            "Annuitization": 0,
+            "Partial Surrender": 0,
+            "Full Surrender": 0,
+            "Surrender Fees - Full": 0,
+            "Surrender Fees - Partial": 0,
+            "MVA Fees": 0,
+            "Fees (all except Surrender and MVA)": 0,
+            "Interest": 90,
+            "Commission Amount": 0,
+            "Death Payments (Cash)": 0,
+            "Interest on Claims (Cash)": 0
+          },
+          "reinsured": {
+            "Premiums": 1500,
+            "Annuitization": 0,
+            "Partial Surrender": 0,
+            "Full Surrender": 0,
+            "Surrender Fees - Full": 0,
+            "Surrender Fees - Partial": 0,
+            "MVA Fees": 0,
+            "Fees (all except Surrender and MVA)": 0,
+            "Interest": 45,
+            "Commission Amount": 0,
+            "Death Payments (Cash)": 0,
+            "Interest on Claims (Cash)": 0
+          }
+        }
+      },
+      "policySummaries": {
+        "P1005": {
+          "policyNumber": "P1005",
+          "policyIssueDate": "2025-10-09",
+          "appSignDate": "2025-10-05",
+          "reinsuranceId": "RI-1005",
+          "treatyId": "02",
+          "reinsurerName": "Guardian Re Partners",
+          "reinsuranceStartDate": "2025-10-15",
+          "reinsuranceEndDate": "2026-10-15",
+          "rateLockDate": "2025-10-07"
+        }
+      }
+    }
+  ]
+}

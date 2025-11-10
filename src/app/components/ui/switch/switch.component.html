@@ -1,0 +1,15 @@
+
+    <button
+      type="button"
+      role="switch"
+      [attr.aria-checked]="checked"
+      [disabled]="disabled"
+      [class]="getSwitchClasses()"
+      (click)="toggle()"
+    >
+      <span
+        [class]="getThumbClasses()"
+        [attr.data-state]="checked ? 'checked' : 'unchecked'"
+      ></span>
+    </button>
+  

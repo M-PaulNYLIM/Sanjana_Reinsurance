@@ -1,0 +1,373 @@
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <h1 class="text-main-title font-bold text-nyl-navy">Policy Details</h1>
+    <a routerLink="/">
+      <ui-button variant="ghost" size="sm" class="flex items-center gap-2 text-gray-600 hover:text-white back-home-btn">
+        ← Back to Home
+      </ui-button>
+    </a>
+  </div>
+
+  <ui-card class="w-full border-0 p-3 shadow-none">
+    <form [formGroup]="form" class="grid gap-2 md:grid-cols-4 md:items-end py-5" novalidate (ngSubmit)="onSearch()" (keydown.enter)="onFormEnter($event)">
+      <div>
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Reinsurer</mat-label>
+          <mat-select #reinsSelect appMatSelectPositionFix formControlName="reinsurer" (keydown.enter)="onSelectEnterFrom(reinsSelect, $event)" (keyup.enter)="onSelectEnterUp(reinsSelect, $event)" (openedChange)="onSelectOpenedChange(reinsSelect, $event)">
+            <mat-option value="">All</mat-option>
+            <mat-option *ngFor="let r of reinsurers" [value]="r">{{ r }} - {{ getReinsurerNaic(r) }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Treaty ID</mat-label>
+          <mat-select #treatySelect appMatSelectPositionFix formControlName="treatyId" (keydown.enter)="onSelectEnterFrom(treatySelect, $event)" (keyup.enter)="onSelectEnterUp(treatySelect, $event)" (openedChange)="onSelectOpenedChange(treatySelect, $event)">
+            <mat-option value="">All</mat-option>
+            <mat-option *ngFor="let t of treatyIds" [value]="t">{{ t }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Start Date</mat-label>
+          <input matInput [matDatepicker]="startPicker" formControlName="startDate" />
+          <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+          <mat-datepicker #startPicker></mat-datepicker>
+          <mat-error *ngIf="form.get('startDate')?.hasError('dateRange') && (form.get('startDate')?.dirty || form.get('startDate')?.touched)">
+            Start Date cannot be after End Date
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>End Date</mat-label>
+          <input matInput [matDatepicker]="endPicker" formControlName="endDate" />
+          <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+          <mat-datepicker #endPicker></mat-datepicker>
+          <mat-error *ngIf="form.get('endDate')?.hasError('dateRange') && (form.get('endDate')?.dirty || form.get('endDate')?.touched)">
+            End Date cannot be before Start Date
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </form>
+    <div class="mt-2 flex justify-end gap-1.5">
+      <ui-button size="sm" class="nyl-primary-action" (clicked)="onSearch()" [disabled]="form.invalid">Search</ui-button>
+      <ui-button *ngIf="hasActiveFilters()" variant="outline" size="sm" class="nyl-cancel-action" (clicked)="clearFilters()">✕ Clear</ui-button>
+    </div>
+  </ui-card>
+
+  <ui-card class="p-4">
+    <ui-card-content>
+      <h2 class="text-subtitle font-semibold text-nyl-navy mb-2">Reinsurance Periods</h2>
+      <div class="overflow-x-auto hidden md:block nyl-grid-table border border-[#d3dae6] rounded-lg">
+        <table class="min-w-full divide-y divide-gray-200 text-sm nyl-grid-table border border-[#d3dae6] rounded-lg overflow-hidden">
+          <thead class="nyl-grid-header">
+            <tr>
+              <th class="nyl-grid-header-cell px-6 py-3 text-left font-medium">Reinsurer</th>
+              <!-- <th class="nyl-grid-header-cell px-6 py-3 text-left font-medium">Reinsurance ID</th> -->
+              <th class="nyl-grid-header-cell px-6 py-3 text-left font-medium">Treaty ID</th>
+              <th class="nyl-grid-header-cell px-6 py-3 text-left font-medium">Period Type</th>
+              <th class="nyl-grid-header-cell px-6 py-3 text-left font-medium">Period Start Date</th>
+              <th class="nyl-grid-header-cell px-6 py-3 text-left font-medium">Period End Date</th>
+              <th class="nyl-grid-header-cell px-6 py-3 text-center font-medium">Action</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <tr *ngFor="let p of filtered" class="transition hover:bg-gray-50" [class.selected-row]="isRowSelected(p)">
+              <td class="px-6 py-4">{{ p.reinsurerName }}</td>
+              <!-- <td class="px-6 py-4">{{ p.reinsuranceId }}</td> -->
+              <td class="px-6 py-4">{{ p.treatyId }}</td>
+              <td class="px-6 py-4">{{ p.periodType }}</td>
+              <td class="px-6 py-4">{{ p.periodStartDate | date: 'MM/dd/yyyy' }}</td>
+              <td class="px-6 py-4">{{ p.periodEndDate | date: 'MM/dd/yyyy' }}</td>
+              <td class="px-6 py-4 text-center">
+                <button type="button" class="inline-flex items-center justify-center p-1 text-[#0a385e] transition hover:text-[#114775]" aria-label="View details" (click)="onViewPeriod(p)">
+                  <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="filtered.length === 0">
+              <td colspan="7" class="px-6 py-10 text-center text-sm text-gray-500">No periods for selected filters.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile card list -->
+      <div class="md:hidden mt-3 space-y-2">
+        <div
+          *ngFor="let p of filtered"
+          class="mobile-period-card border nyl-dark-grey bg-white text-[#1f3d5a] rounded-lg"
+          [ngClass]="{ 'selected-row': isRowSelected(p) }"
+        >
+          <div class="mobile-period-card__content p-3">
+            <div class="mobile-field"><span class="mobile-field-label">Reinsurer:</span><span class="mobile-field-value">{{ p.reinsurerName }}</span></div>
+            <div class="mobile-field"><span class="mobile-field-label">Treaty ID:</span><span class="mobile-field-value">{{ p.treatyId }}</span></div>
+            <div class="mobile-field"><span class="mobile-field-label">Type:</span><span class="mobile-field-value">{{ p.periodType }}</span></div>
+            <div class="mobile-field"><span class="mobile-field-label">Start:</span><span class="mobile-field-value">{{ p.periodStartDate | date: 'MM/dd/yyyy' }}</span></div>
+            <div class="mobile-field"><span class="mobile-field-label">End:</span><span class="mobile-field-value">{{ p.periodEndDate | date: 'MM/dd/yyyy' }}</span></div>
+          </div>
+          <div class="mobile-period-card__actions flex items-center justify-end gap-2 p-2 border-t border-nyl-blue/15">
+            <button
+              type="button"
+              class="inline-flex items-center justify-center p-2 text-[#0a385e] transition hover:text-[#114775]"
+              (click)="onViewPeriod(p)"
+              aria-label="View details"
+            >
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div *ngIf="filtered.length === 0" class="rounded-lg border border-dashed border-nyl-blue/20 bg-white/60 p-6 text-center text-sm text-gray-500">
+          No periods for selected filters.
+        </div>
+      </div>
+
+      <div *ngIf="totalFiltered > pageSize" class="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm">
+        <div class="flex items-center gap-3">
+          <span>Rows per page</span>
+          <mat-form-field appearance="outline" class="page-size-field">
+            <mat-select [value]="pageSize" (selectionChange)="setPageSize($event.value)">
+              <mat-option *ngFor="let s of pageSizeOptions" [value]="s">{{ s }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="flex-1 text-center">
+          Page {{ page }} of {{ totalPages }} • {{ totalFiltered }} records
+        </div>
+        <div class="flex items-center gap-2">
+          <ui-button variant="outline" size="sm" (clicked)="prevPage()" [disabled]="page <= 1">Prev</ui-button>
+          <ui-button variant="outline" size="sm" (clicked)="nextPage()" [disabled]="page >= totalPages">Next</ui-button>
+        </div>
+      </div>
+    </ui-card-content>
+  </ui-card>
+
+  <ui-card class="mt-8 p-4" *ngIf="selectedPeriod">
+    <ui-card-content>
+    <h2 class="text-subtitle font-semibold text-nyl-navy">Summary Details</h2>
+    <div class="flex flex-col gap-2 text-sm text-gray-700 mt-2">
+      <span>Showing details for period:
+        <span class="font-semibold">{{ summaryStart | date: 'MM/dd/yyyy' }}</span>
+        to
+        <span class="font-semibold">{{ summaryEnd | date: 'MM/dd/yyyy' }}</span>
+      </span>
+      <div class="mt-2 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+        <div class="text-xs text-gray-600">Enter policy number to view policy and transaction summary</div>
+        <div class="flex flex-wrap items-center gap-2 mt-2 sm:mt-0 sm:flex-nowrap">
+          <mat-form-field appearance="outline" class="policy-number-field narrow">
+            <mat-label>Policy Number</mat-label>
+            <input #policyInput matInput [value]="selectedPolicyNumber" (keyup.enter)="onPolicySearch(policyInput.value)" />
+          </mat-form-field>
+          <ui-button size="sm" class="nyl-primary-action h-10 mb-2" (clicked)="onPolicySearch(policyInput.value)">Search</ui-button>
+          <ui-button *ngIf="selectedPolicyNumber" variant="outline" size="sm" class="nyl-cancel-action h-10 mb-2" (clicked)="onPolicyClear(policyInput)">✕ Clear</ui-button>
+        </div>
+        <div *ngIf="selectedPolicyNumber && !hasPolicyMatch" class="rounded-md border border-dashed border-nyl-blue/30 bg-white/60 px-3 py-2 text-sm text-gray-600">
+          No details to show for the entered policy number.
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="hasPolicyMatch">
+      <h3 class="text-sm font-semibold text-nyl-navy mb-2 mt-2">Summary Cash Flow</h3>
+      <div class="overflow-x-auto cashflow-wrap relative">
+        <table class="min-w-full divide-y divide-gray-200 text-sm  cashflow-table with-row-borders">
+          <thead class="nyl-grid-header">
+            <tr>
+              <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium sticky-col"></th>
+              <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Premiums</th>
+              <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Annuitization</th>
+              <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Partial Surrender</th>
+              <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Full Surrender</th>
+              <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Surrender Fees - Full</th>
+              <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Surrender Fees - Partial</th>
+              <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">MVA Fees</th>
+              <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Fees (all except Surrender and MVA)</th>
+              <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Interest</th>
+              <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Commission Amount</th>
+              <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Death Payments (Cash)</th>
+              <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Interest on Claims (Cash)</th>
+              <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Expense Allowance % Premium (up front)</th>
+              <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Ceding Allowance % average AV during month (applied monthly)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="px-4 py-2 font-semibold sticky-col">TOTAL POLICY</td>
+              <td class="px-4 py-2">{{ formatCurrency(cashFlowTotals().total['Premiums']) }}</td>
+              <td class="px-4 py-2">{{ formatCurrency(cashFlowTotals().total['Annuitization']) }}</td>
+              <td class="px-4 py-2">{{ formatCurrency(cashFlowTotals().total['Partial Surrender']) }}</td>
+              <td class="px-4 py-2">{{ formatCurrency(cashFlowTotals().total['Full Surrender']) }}</td>
+              <td class="px-4 py-2">{{ formatCurrency(cashFlowTotals().total['Surrender Fees - Full']) }}</td>
+              <td class="px-4 py-2">{{ formatCurrency(cashFlowTotals().total['Surrender Fees - Partial']) }}</td>
+              <td class="px-4 py-2">{{ formatCurrency(cashFlowTotals().total['MVA Fees']) }}</td>
+              <td class="px-4 py-2">{{ formatCurrency(cashFlowTotals().total['Fees (all except Surrender and MVA)']) }}</td>
+              <td class="px-4 py-2">{{ formatCurrency(cashFlowTotals().total['Interest']) }}</td>
+              <td class="px-4 py-2">{{ formatCurrency(cashFlowTotals().total['Commission Amount']) }}</td>
+              <td class="px-4 py-2">{{ formatCurrency(cashFlowTotals().total['Death Payments (Cash)']) }}</td>
+              <td class="px-4 py-2">{{ formatCurrency(cashFlowTotals().total['Interest on Claims (Cash)']) }}</td>
+              <td class="px-4 py-2">{{ formatPercent(cashFlowTotals().total['Expense Allowance % Premium (up front)']) }}</td>
+              <td class="px-4 py-2">{{ formatPercent(cashFlowTotals().total['Ceding Allowance % average AV during month (applied monthly)']) }}</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-2 font-semibold sticky-col">REINSURED</td>
+              <td class="px-4 py-2">{{ formatCurrency(cashFlowTotals().reinsured['Premiums']) }}</td>
+              <td class="px-4 py-2">{{ formatCurrency(cashFlowTotals().reinsured['Annuitization']) }}</td>
+              <td class="px-4 py-2">{{ formatCurrency(cashFlowTotals().reinsured['Partial Surrender']) }}</td>
+              <td class="px-4 py-2">{{ formatCurrency(cashFlowTotals().reinsured['Full Surrender']) }}</td>
+              <td class="px-4 py-2">{{ formatCurrency(cashFlowTotals().reinsured['Surrender Fees - Full']) }}</td>
+              <td class="px-4 py-2">{{ formatCurrency(cashFlowTotals().reinsured['Surrender Fees - Partial']) }}</td>
+              <td class="px-4 py-2">{{ formatCurrency(cashFlowTotals().reinsured['MVA Fees']) }}</td>
+              <td class="px-4 py-2">{{ formatCurrency(cashFlowTotals().reinsured['Fees (all except Surrender and MVA)']) }}</td>
+              <td class="px-4 py-2">{{ formatCurrency(cashFlowTotals().reinsured['Interest']) }}</td>
+              <td class="px-4 py-2">{{ formatCurrency(cashFlowTotals().reinsured['Commission Amount']) }}</td>
+              <td class="px-4 py-2">{{ formatCurrency(cashFlowTotals().reinsured['Death Payments (Cash)']) }}</td>
+              <td class="px-4 py-2">{{ formatCurrency(cashFlowTotals().reinsured['Interest on Claims (Cash)']) }}</td>
+              <td class="px-4 py-2">{{ formatPercent(cashFlowTotals().reinsured['Expense Allowance % Premium (up front)']) }}</td>
+              <td class="px-4 py-2">{{ formatPercent(cashFlowTotals().reinsured['Ceding Allowance % average AV during month (applied monthly)']) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <ng-container *ngIf="hasPolicyMatch && selectedPolicy as p">
+      <div class="mt-6">
+        <h3 class="text-sm font-semibold text-nyl-navy mb-2">Summary Policy Details</h3>
+        <div class="overflow-x-auto hidden md:block nyl-grid-table border border-[#d3dae6] rounded-lg">
+          <table class="min-w-full divide-y divide-gray-200 text-sm nyl-grid-table with-row-borders border border-[#d3dae6] rounded-lg overflow-hidden summary-trans-table">
+            <thead class="nyl-grid-header">
+              <tr>
+                <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Policy Issue Date</th>
+                <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">App Sign Date</th>
+                <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Reinsurance ID</th>
+                <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Treaty ID</th>
+                <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Reinsurance Name</th>
+                <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Reinsurance Start Date</th>
+                <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Reinsurance End Date</th>
+                <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Rate Lock Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="px-4 py-2">{{ p.policyIssueDate | date: 'MM/dd/yyyy' }}</td>
+                <td class="px-4 py-2">{{ p.appSignDate | date: 'MM/dd/yyyy' }}</td>
+                <td class="px-4 py-2">{{ p.reinsuranceId }}</td>
+                <td class="px-4 py-2">{{ p.treatyId }}</td>
+                <td class="px-4 py-2">{{ p.reinsurerName }}</td>
+                <td class="px-4 py-2">{{ p.reinsuranceStartDate | date: 'MM/dd/yyyy' }}</td>
+                <td class="px-4 py-2">{{ p.reinsuranceEndDate | date: 'MM/dd/yyyy' }}</td>
+                <td class="px-4 py-2">{{ p.rateLockDate | date: 'MM/dd/yyyy' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Mobile card list: Summary Policy Details -->
+      <div class="md:hidden mt-3 space-y-2">
+        <div class="mobile-period-card border nyl-dark-grey bg-white text-[#1f3d5a] rounded-lg">
+          <div class="mobile-period-card__content p-3">
+            <div class="mobile-field"><span class="mobile-field-label">Policy Issue Date:</span><span class="mobile-field-value">{{ p.policyIssueDate | date: 'MM/dd/yyyy' }}</span></div>
+            <div class="mobile-field"><span class="mobile-field-label">App Sign Date:</span><span class="mobile-field-value">{{ p.appSignDate | date: 'MM/dd/yyyy' }}</span></div>
+            <div class="mobile-field"><span class="mobile-field-label">Reinsurance ID:</span><span class="mobile-field-value">{{ p.reinsuranceId }}</span></div>
+            <div class="mobile-field"><span class="mobile-field-label">Treaty ID:</span><span class="mobile-field-value">{{ p.treatyId }}</span></div>
+            <div class="mobile-field"><span class="mobile-field-label">Reinsurer:</span><span class="mobile-field-value">{{ p.reinsurerName }}</span></div>
+            <div class="mobile-field"><span class="mobile-field-label">Reinsurance Start:</span><span class="mobile-field-value">{{ p.reinsuranceStartDate | date: 'MM/dd/yyyy' }}</span></div>
+            <div class="mobile-field"><span class="mobile-field-label">Reinsurance End:</span><span class="mobile-field-value">{{ p.reinsuranceEndDate | date: 'MM/dd/yyyy' }}</span></div>
+            <div class="mobile-field"><span class="mobile-field-label">Rate Lock Date:</span><span class="mobile-field-value">{{ p.rateLockDate | date: 'MM/dd/yyyy' }}</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <h3 class="text-sm font-semibold text-nyl-navy mb-2">Summary Transaction Details</h3>
+        <div class="overflow-x-auto hidden md:block nyl-grid-table border border-[#d3dae6] rounded-lg">
+          <table class="min-w-full divide-y divide-gray-200 text-sm nyl-grid-table with-row-borders border border-[#d3dae6] rounded-lg overflow-hidden summary-trans-table">
+            <thead class="nyl-grid-header">
+              <tr>
+                <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Transaction Type</th>
+                <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Process Date</th>
+                <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Amount</th>
+                <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Surrender Charge</th>
+                <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">MVD Adj Amount</th>
+                <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Fee Amount</th>
+                <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Reversal</th>
+                <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Death Claim Interest</th>
+                <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Death Claim Benefit Amount</th>
+                <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Commission</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let t of pagedPolicyTransactions">
+                <td class="px-4 py-2">{{ t.transactionType }}</td>
+                <td class="px-4 py-2">{{ t.processDate | date: 'MM/dd/yyyy' }}</td>
+                <td class="px-4 py-2">{{ formatCurrency(t.amount || 0) }}</td>
+                <td class="px-4 py-2">{{ formatCurrency(t.surrenderCharge || 0) }}</td>
+                <td class="px-4 py-2">{{ formatCurrency(t.mvdAdjAmount || 0) }}</td>
+                <td class="px-4 py-2">{{ formatCurrency(t.feeAmount || 0) }}</td>
+                <td class="px-4 py-2">{{ t.reversal || 'No' }}</td>
+                <td class="px-4 py-2">{{ formatCurrency(t.deathClaimInterest || 0) }}</td>
+                <td class="px-4 py-2">{{ formatCurrency(t.deathClaimBenefitAmount || 0) }}</td>
+                <td class="px-4 py-2">{{ formatCurrency(t.commission || 0) }}</td>
+              </tr>
+              <tr *ngIf="policyTransactions.length === 0">
+                <td colspan="10" class="px-6 py-10 text-center text-sm text-gray-500">No transactions for selected policy and period.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Mobile card list: Summary Transaction Details -->
+        <div class="md:hidden mt-3 space-y-2">
+          <div
+            *ngFor="let t of pagedPolicyTransactions"
+            class="mobile-period-card border nyl-dark-grey bg-white text-[#1f3d5a] rounded-lg"
+          >
+            <div class="mobile-period-card__content p-3">
+              <div class="mobile-field"><span class="mobile-field-label">Transaction Type:</span><span class="mobile-field-value">{{ t.transactionType }}</span></div>
+              <div class="mobile-field"><span class="mobile-field-label">Process Date:</span><span class="mobile-field-value">{{ t.processDate | date: 'MM/dd/yyyy' }}</span></div>
+              <div class="mobile-field"><span class="mobile-field-label">Amount:</span><span class="mobile-field-value">{{ formatCurrency(t.amount || 0) }}</span></div>
+              <div class="mobile-field"><span class="mobile-field-label">Surrender Charge:</span><span class="mobile-field-value">{{ formatCurrency(t.surrenderCharge || 0) }}</span></div>
+              <div class="mobile-field"><span class="mobile-field-label">MVD Adj Amount:</span><span class="mobile-field-value">{{ formatCurrency(t.mvdAdjAmount || 0) }}</span></div>
+              <div class="mobile-field"><span class="mobile-field-label">Fee Amount:</span><span class="mobile-field-value">{{ formatCurrency(t.feeAmount || 0) }}</span></div>
+              <div class="mobile-field"><span class="mobile-field-label">Reversal:</span><span class="mobile-field-value">{{ t.reversal || 'No' }}</span></div>
+              <div class="mobile-field"><span class="mobile-field-label">Death Claim Interest:</span><span class="mobile-field-value">{{ formatCurrency(t.deathClaimInterest || 0) }}</span></div>
+              <div class="mobile-field"><span class="mobile-field-label">Death Claim Benefit Amount:</span><span class="mobile-field-value">{{ formatCurrency(t.deathClaimBenefitAmount || 0) }}</span></div>
+              <div class="mobile-field"><span class="mobile-field-label">Commission:</span><span class="mobile-field-value">{{ formatCurrency(t.commission || 0) }}</span></div>
+            </div>
+          </div>
+          <div *ngIf="policyTransactions.length === 0" class="rounded-lg border border-dashed border-nyl-blue/20 bg-white/60 p-6 text-center text-sm text-gray-500">
+            No transactions for selected policy and period.
+          </div>
+        </div>
+
+        <div *ngIf="policyTransactions.length > transPageSize" class="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm">
+          <div class="flex items-center gap-3">
+            <span>Rows per page</span>
+            <mat-form-field appearance="outline" class="page-size-field">
+              <mat-select [value]="transPageSize" (selectionChange)="setTransPageSize($event.value)">
+                <mat-option *ngFor="let s of transPageSizeOptions" [value]="s">{{ s }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="flex-1 text-center">
+            Page {{ transPage }} of {{ transTotalPages }} • {{ policyTransactions.length }} records
+          </div>
+          <div class="flex items-center gap-2">
+            <ui-button variant="outline" size="sm" (clicked)="transPrevPage()" [disabled]="transPage <= 1">Prev</ui-button>
+            <ui-button variant="outline" size="sm" (clicked)="transNextPage()" [disabled]="transPage >= transTotalPages">Next</ui-button>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    </ui-card-content>
+  </ui-card>
+</div>

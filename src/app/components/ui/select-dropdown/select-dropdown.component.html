@@ -1,0 +1,68 @@
+<ui-dropdown-menu
+  class="select-dropdown__content"
+  [align]="align"
+>
+  <div slot="trigger" class="select-dropdown__trigger-wrapper">
+    <button
+      type="button"
+      class="select-trigger"
+      [class.select-trigger--placeholder]="isPlaceholder"
+      [class.select-trigger--disabled]="disabled"
+      [disabled]="disabled"
+    >
+      <span class="select-trigger__label" [title]="displayLabel">{{ displayLabel }}</span>
+      <svg class="select-trigger__icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path
+          fill-rule="evenodd"
+          d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.585l3.71-3.354a.75.75 0 1 1 1.02 1.1l-4.22 3.813a.75.75 0 0 1-1.02 0l-4.22-3.812a.75.75 0 0 1 .02-1.1z"
+          clip-rule="evenodd"
+        />
+      </svg>
+    </button>
+  </div>
+
+  <ng-container *ngIf="showEmptyOption">
+    <ui-dropdown-menu-item
+      class="select-dropdown__item"
+      [class.select-dropdown__item--active]="isSelected(null)"
+      (selected)="toggleOption(null)"
+    >
+      <span class="select-dropdown__item-label">{{ emptyLabel }}</span>
+      <svg
+        *ngIf="isSelected(null)"
+        class="select-dropdown__check"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M16.704 5.29a1 1 0 0 1 0 1.415l-7.25 7.25a1 1 0 0 1-1.414 0l-3.25-3.25a1 1 0 1 1 1.414-1.415l2.543 2.543 6.543-6.543a1 1 0 0 1 1.414 0Z"
+          clip-rule="evenodd"
+        />
+      </svg>
+    </ui-dropdown-menu-item>
+  </ng-container>
+
+  <ui-dropdown-menu-item
+    *ngFor="let option of options; trackBy: trackByValue"
+    class="select-dropdown__item"
+    [class.select-dropdown__item--active]="isSelected(option.value)"
+    (selected)="toggleOption(option.value)"
+  >
+    <span class="select-dropdown__item-label" [title]="option.label">{{ option.label }}</span>
+    <svg
+      *ngIf="isSelected(option.value)"
+      class="select-dropdown__check"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M16.704 5.29a1 1 0 0 1 0 1.415l-7.25 7.25a1 1 0 0 1-1.414 0l-3.25-3.25a1 1 0 1 1 1.414-1.415l2.543 2.543 6.543-6.543a1 1 0 0 1 1.414 0Z"
+        clip-rule="evenodd"
+      />
+    </svg>
+  </ui-dropdown-menu-item>
+</ui-dropdown-menu>

@@ -1,0 +1,127 @@
+:host {
+  display: block;
+}
+
+:host ::ng-deep .nyl-grid-table {
+  font-size: 0.75rem !important;
+}
+
+:host ::ng-deep .nyl-grid-table th,
+:host ::ng-deep .nyl-grid-table td {
+  font-size: inherit !important;
+}
+
+:host ::ng-deep .activated-row {
+  background-color: #e7edf7 !important;
+  color: #0a385e !important;
+  transition: background-color 0.2s ease;
+}
+
+:host ::ng-deep .activated-row td {
+  color: #0a385e !important;
+  font-weight: 600;
+}
+
+.tenor-group-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.desktop-grid-table-wrapper {
+  display: block;
+}
+
+::host ::ng-deep .nyl-grid-table {
+  table-layout: fixed;
+}
+
+::host ::ng-deep .treaty-col {
+  width: 20%;
+  padding-left: 0.75rem !important;
+  padding-right: 0.75rem !important;
+}
+
+::host ::ng-deep .treaty-col--quote {
+  text-align: right !important;
+}
+
+::host ::ng-deep .treaty-col--action {
+  width: 20%;
+}
+
+.mobile-treaty-list {
+  display: none;
+}
+
+.mobile-treaty-card {
+  border-radius: 0.75rem;
+  padding: 0.75rem 0.85rem;
+}
+
+.mobile-treaty-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.mobile-treaty-field {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.25rem 0.5rem;
+}
+
+.mobile-treaty-field-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #5b6f84;
+}
+
+.mobile-treaty-field-value {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #1a3a5f;
+  text-align: left;
+}
+
+.mobile-treaty-card__actions {
+  display: none;
+}
+
+.mobile-treaty-card--active {
+  border-color: #0a385e;
+  box-shadow: 0 0 0 2px rgba(10, 56, 94, 0.12);
+}
+
+@media (max-width: 600px) {
+  .desktop-grid-table-wrapper {
+    display: none;
+  }
+
+  .mobile-treaty-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .mobile-treaty-card {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+
+  .mobile-treaty-card__actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 2.5rem;
+  }
+
+  .mobile-treaty-card__actions button {
+    border-radius: 9999px;
+  }
+}

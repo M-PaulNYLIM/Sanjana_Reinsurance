@@ -1,0 +1,310 @@
+<div class="min-h-screen bg-gray-50 py-10 px-4 sm:px-4 lg:px-7 font-sans text-gray-900">
+      <div class="mx-auto w-full max-w-7xl space-y-10">
+        <header class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+          <div class="space-y-4 min-w-0">
+            <div class="flex flex-wrap items-center gap-3 text-sm text-gray-500">
+              <span
+                class="inline-flex items-center gap-2 rounded-full bg-nyl-navy/10 px-3 py-1 font-medium text-nyl-navy"
+              >
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 6a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V6z"
+                  />
+                </svg>
+                Enterprise Dashboard
+              </span>
+              <span
+                >Last refreshed {{ lastUpdate.date }} • {{ lastUpdate.daysSince }} days ago</span
+              >
+            </div>
+            <div>
+              <h1 class="text-main-title font-semibold text-nyl-navy">Enterprise Reinsurance Dashboard</h1>
+              <p class="mt-2 max-w-2xl text-content text-gray-600">
+                Executive summary of policy volume, premium activity, and reinsurer performance.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end min-w-0">
+            <div
+              class="flex flex-nowrap items-center gap-1 rounded-full border border-gray-200 bg-white px-1 py-1 shadow-sm overflow-x-auto"
+            >
+              <button
+                *ngFor="let period of timePeriods"
+                type="button"
+                class="whitespace-nowrap"
+                [class]="getPeriodButtonClasses(period.key)"
+                (click)="setActivePeriod(period.key)"
+              >
+                {{ period.label }}
+              </button>
+            </div>
+
+            <ui-dropdown-menu align="end" class="shrink-0">
+              <div slot="trigger">
+                <ui-button
+                  variant="outline"
+                  size="sm"
+                  class="flex items-center gap-2 rounded-full border-gray-300 bg-white text-sm shadow-sm"
+                >
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 10v6m0 0l-4-4m4 4l4-4m3-6H5a2 2 0 00-2 2v12a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-2M9 1v6h6V1"
+                    />
+                  </svg>
+                  Export Executive Summary
+                </ui-button>
+              </div>
+
+              <ui-dropdown-menu-item (selected)="handleExport('pdf')">
+                Export to PDF
+              </ui-dropdown-menu-item>
+              <ui-dropdown-menu-item (selected)="handleExport('excel')">
+                Export to Excel
+              </ui-dropdown-menu-item>
+            </ui-dropdown-menu>
+          </div>
+        </header>
+
+        <section class="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+          <ui-card
+            *ngFor="let kpi of kpiData"
+            class="border border-gray-200 bg-white shadow-sm transition hover:shadow-md"
+          >
+            <ui-card-content class="flex items-center justify-between gap-4 p-6">
+              <div class="space-y-3">
+                <div class="text-sm font-medium text-gray-600">{{ kpi.label }}</div>
+                <div class="text-3xl font-semibold text-gray-900">{{ kpi.value }}</div>
+                <div
+                  class="flex flex-wrap items-center gap-1 text-sm font-medium"
+                  [ngClass]="getTrendTextClass(kpi.trend)"
+                >
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      *ngIf="kpi.trend === 'up'"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 10l7-7 7 7"
+                    />
+                    <path
+                      *ngIf="kpi.trend === 'down'"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 14l-7 7-7-7"
+                    />
+                    <path
+                      *ngIf="kpi.trend === 'steady'"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M4 12h16"
+                    />
+                  </svg>
+                  <span>{{ kpi.changeValue }}</span>
+                  <span class="text-xs font-normal text-gray-500">{{ kpi.changeDescription }}</span>
+                </div>
+              </div>
+              <div
+                class="flex h-12 w-12 items-center justify-center rounded-full text-xl"
+                [ngStyle]="getIconStyles(kpi.accentColor)"
+              >
+                <ng-container [ngSwitch]="kpi.icon">
+                  <svg
+                    *ngSwitchCase="'policies'"
+                    class="h-6 w-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5l5 5v11a2 2 0 01-2 2z"
+                    />
+                  </svg>
+                  <svg
+                    *ngSwitchCase="'reinsurers'"
+                    class="h-6 w-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M17 20h5V9h-5v11zM2 20h5V13H2v7zm7 0h5V4H9v16z"
+                    />
+                  </svg>
+                  <svg
+                    *ngSwitchCase="'premium'"
+                    class="h-6 w-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3 1.343 3 3-1.343 3-3 3m0-12c1.306 0 2.417.835 2.83 2M9.17 9.17C9.583 8.835 10.694 8 12 8m0 12c-1.306 0-2.417-.835-2.83-2M5 12h14"
+                    />
+                  </svg>
+                </ng-container>
+              </div>
+            </ui-card-content>
+          </ui-card>
+        </section>
+
+        <section class="grid gap-6 lg:grid-cols-3">
+          <ui-card class="lg:col-span-2">
+            <ui-card-header>
+              <ui-card-title>Monthly Premium Trends</ui-card-title>
+              <ui-card-description>
+                Month-over-month snapshot of gross and net written premium in billions
+              </ui-card-description>
+            </ui-card-header>
+            <ui-card-content>
+              <div class="space-y-4">
+                <div class="h-72">
+                  <canvas
+                    baseChart
+                    [data]="performanceChartData"
+                    [options]="performanceChartOptions"
+                    [type]="'line'"
+                    class="h-full w-full"
+                  ></canvas>
+                </div>
+                <div
+                  class="rounded-lg border border-gray-200 bg-white/80 px-4 py-3 text-xs text-gray-600"
+                >
+                  <span class="font-semibold text-nyl-navy">Legend:</span>
+                  <span class="ml-3 inline-flex items-center gap-1">
+                    <span
+                      class="h-2.5 w-2.5 rounded-full"
+                      [style.background-color]="legendColors.gross"
+                    ></span>
+                    Gross Written Premium
+                  </span>
+                  <span class="ml-4 inline-flex items-center gap-1">
+                    <span
+                      class="h-2.5 w-2.5 rounded-full"
+                      [style.background-color]="legendColors.net"
+                    ></span>
+                    Net Premium
+                  </span>
+                </div>
+              </div>
+            </ui-card-content>
+          </ui-card>
+
+          <ui-card>
+            <ui-card-header>
+              <ui-card-title>Premiums by Reinsurer</ui-card-title>
+              <ui-card-description
+                >Share of ceded premium contributions across the portfolio</ui-card-description
+              >
+            </ui-card-header>
+            <ui-card-content>
+              <div class="h-60">
+                <canvas
+                  baseChart
+                  [data]="capacityChartData"
+                  [options]="pieChartOptions"
+                  [type]="'doughnut'"
+                  class="h-full w-full"
+                ></canvas>
+              </div>
+              <ul class="mt-6 space-y-3 text-sm">
+                <li
+                  *ngFor="let slice of capacityMix"
+                  class="flex items-center justify-between"
+                >
+                  <div class="flex items-center gap-3">
+                    <span
+                      class="h-2.5 w-2.5 rounded-full"
+                      [style.background-color]="slice.color"
+                    ></span>
+                    <span class="font-medium text-gray-700">{{ slice.name }}</span>
+                  </div>
+                  <span class="text-gray-600">{{ slice.value }}%</span>
+                </li>
+              </ul>
+            </ui-card-content>
+          </ui-card>
+        </section>
+
+        <section class="grid gap-6 lg:grid-cols-2">
+          <ui-card>
+            <ui-card-header>
+              <ui-card-title>Largest Premiums by Reinsurer</ui-card-title>
+              <ui-card-description
+                >Horizontal bar chart of reinsurer premium volume</ui-card-description
+              >
+            </ui-card-header>
+            <ui-card-content>
+              <div class="h-80">
+                <canvas
+                  baseChart
+                  [data]="reinsurerPremiumChartData"
+                  [options]="reinsurerPremiumChartOptions"
+                  [type]="'bar'"
+                  class="h-full w-full"
+                ></canvas>
+              </div>
+              <ul class="mt-6 space-y-2 text-sm">
+                <li
+                  *ngFor="let item of reinsurerPremiumSeries"
+                  class="flex items-center justify-between"
+                >
+                  <span class="font-medium text-gray-700">{{ item.reinsurer }}</span>
+                  <span class="text-gray-900 font-semibold"
+                    >$ {{ item.premiumMillions | number: '1.1-1' }}M</span
+                  >
+                </li>
+              </ul>
+            </ui-card-content>
+          </ui-card>
+
+          <ui-card>
+            <ui-card-header>
+              <ui-card-title>Top Products by Reinsurer</ui-card-title>
+              <ui-card-description
+                >Horizontal bar chart of leading product premiums</ui-card-description
+              >
+            </ui-card-header>
+            <ui-card-content>
+              <div class="h-80">
+                <canvas
+                  baseChart
+                  [data]="topProductChartData"
+                  [options]="topProductChartOptions"
+                  [type]="'bar'"
+                  class="h-full w-full"
+                ></canvas>
+              </div>
+              <ul class="mt-6 space-y-2 text-sm">
+                <li *ngFor="let item of reinsurerTopProductSeries" class="space-y-1">
+                  <div class="flex items-center justify-between">
+                    <span class="font-medium text-gray-700">{{ item.product }}</span>
+                    <span class="text-gray-900 font-semibold"
+                      >$ {{ item.premiumMillions | number: '1.1-1' }}M</span
+                    >
+                  </div>
+                  <p class="text-xs text-gray-500">{{ item.reinsurer }}</p>
+                </li>
+              </ul>
+            </ui-card-content>
+          </ui-card>
+        </section>
+      </div>
+    </div>

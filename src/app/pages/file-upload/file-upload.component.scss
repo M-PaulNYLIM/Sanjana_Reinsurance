@@ -1,0 +1,11 @@
+:host {
+  display: block;
+}
+
+:host ::ng-deep .max-w-4xl.mx-auto ui-card .space-y-6 {
+  text-align: left;
+}
+
+:host ::ng-deep .max-w-4xl.mx-auto ui-card .space-y-6 h1 {
+  margin: 0;
+}
