@@ -694,7 +694,7 @@ constructor(private router: Router, private fb: FormBuilder, private policyServi
             const lastDay = new Date(Date.UTC(end.getUTCFullYear(), end.getUTCMonth() + 1, 0)).getUTCDate();
             return isFirst && end.getUTCDate() === lastDay && start.getUTCFullYear() === end.getUTCFullYear() && start.getUTCMonth() === end.getUTCMonth();
         };
-        const includeMonth = !!(s && e && (daysBetween(s, e) > 7 || isFullMonthRange(s, e)));
+        const includeMonth = !!(s && e && isFullMonthRange(s, e));
         return (this.periods || []).filter(p => {
             const matchesReinsurer = !reinsurer || p.reinsurerName === reinsurer;
             const matchesTreaty = !treatyId || p.treatyId === treatyId;
