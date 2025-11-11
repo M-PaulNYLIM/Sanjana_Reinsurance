@@ -764,7 +764,7 @@ constructor(private router: Router, private fb: FormBuilder, private policyServi
             reinsurerId: reinsurerId || null,
             treatyId: v.treatyId || null,
             start,
-            end,
+            end: end || null,
         }).pipe(take(1)).subscribe(periods => {
             this.periods = periods || [];
         });
