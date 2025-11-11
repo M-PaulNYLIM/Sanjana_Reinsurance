@@ -62,15 +62,20 @@ export class ReinsurancePeriodsService {
     };
     const includeMonth = !!(s && e && isFullMonthRange(s, e));
 
-    return list.filter(p => {
+    const base = list.filter(p => {
       const matchesReinsurer = !reinsurer || p.reinsurerName === reinsurer;
       const matchesTreaty = !treatyId || p.treatyId === treatyId;
-      // For explicit short ranges (weekly), require full containment; for long/full-month ranges, allow overlap
       const within = (s && e)
         ? (includeMonth ? (p.periodEndDate >= s && p.periodStartDate <= e) : (p.periodStartDate >= s && p.periodEndDate <= e))
         : (s ? p.periodEndDate >= s : (e ? p.periodStartDate <= e : true));
       const typeOk = p.periodType === 'Week' || (includeMonth && p.periodType === 'Month');
       return typeOk && within && matchesReinsurer && matchesTreaty;
     });
+
+    if (s && e && !includeMonth) {
+      const weeklyAtEnd = base.filter(p => p.periodType === 'Week' && p.periodEndDate === e);
+      if (weeklyAtEnd.length) return weeklyAtEnd;
+    }
+    return base;
   }
 }
