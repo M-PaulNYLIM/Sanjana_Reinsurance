@@ -739,7 +739,11 @@ constructor(private router: Router, private fb: FormBuilder, private policyServi
         const reinsurerName: string = v.reinsurer || '';
         const reinsurerId: string = reinsurerName ? this.getReinsurerNaic(reinsurerName) : '';
         const start = this.toLocalIso(v.startDate);
-        const end = this.toLocalIso(v.endDate);
+        let end = this.toLocalIso(v.endDate);
+        // If user changed start but left end at the default, treat as open-ended range
+        if (start && end && this.defaultStartDate && this.defaultEndDate && start !== this.defaultStartDate && end === this.defaultEndDate) {
+            end = null;
+        }
         // Save filters
         this.appliedFilters = {
             search: (v.search || '').toString(),
