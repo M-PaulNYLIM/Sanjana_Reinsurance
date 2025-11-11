@@ -104,7 +104,7 @@ export class PolicyDetailsService {
           return isFirst && endD.getUTCDate() === lastDay && startD.getUTCFullYear() === endD.getUTCFullYear() && startD.getUTCMonth() === endD.getUTCMonth();
         };
         const includeMonth = !!(s && e && (daysBetween(s, e) > 7 || isFullMonthRange(s, e)));
-        return list.filter(p => {
+        const base = list.filter(p => {
           const matchesReinsurer = !reinsurer || p.reinsurerName === reinsurer;
           const matchesTreaty = !treatyId || p.treatyId === treatyId;
           const within = (s && e) ? (p.periodStartDate >= s && p.periodEndDate <= e)
@@ -112,6 +112,11 @@ export class PolicyDetailsService {
           const typeOk = p.periodType === 'Week' || (includeMonth && p.periodType === 'Month');
           return typeOk && within && matchesReinsurer && matchesTreaty;
         });
+        if (s && e && !includeMonth) {
+          const weeklyAtEnd = base.filter(p => p.periodType === 'Week' && p.periodEndDate === e);
+          if (weeklyAtEnd.length) return weeklyAtEnd;
+        }
+        return base;
       }),
       catchError(() => of([] as ReinsurancePeriod[]))
     );
