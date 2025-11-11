@@ -195,7 +195,20 @@
               <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Death Payments (Cash)</th>
               <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Interest on Claims (Cash)</th>
               <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">Expense Allowance % Premium (up front)</th>
-              <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium" title="Ceding Allowance % — average Account Value during month (applied monthly)">Ceding Allow. %</th>
+              <th class="nyl-grid-header-cell px-4 py-2 text-left font-medium">
+                <span>Ceding Allow. %</span>
+                <span class="ml-1 inline-flex align-middle text-gray-500"
+                      [matTooltip]="'Ceding Allowance % — average Account Value during month (applied monthly)'"
+                      matTooltipPosition="above"
+                      [matTooltipTouchGestures]="'auto'"
+                      aria-label="Ceding Allowance % tooltip">
+                  <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M12 16v-4"></path>
+                    <path d="M12 8h.01"></path>
+                  </svg>
+                </span>
+              </th>
             </tr>
           </thead>
           <tbody>
