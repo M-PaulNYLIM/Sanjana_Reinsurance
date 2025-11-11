@@ -8,6 +8,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { CardComponent, CardContentComponent } from '../../components/ui/card';
 import { ButtonComponent } from '../../components/ui/button/button.component';
 import { MatSelectPositionFixDirective } from '../../directives/mat-select-position-fix.directive';
@@ -29,6 +30,7 @@ import { PolicyDetailsLookupService } from './services/policy-details-lookup.ser
     MatInputModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatTooltipModule,
     MatSelectPositionFixDirective,
   ],
   templateUrl: './policy-details.component.html',
