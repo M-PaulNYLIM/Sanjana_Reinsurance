@@ -60,7 +60,7 @@ export class ReinsurancePeriodsService {
       const lastDay = new Date(Date.UTC(end.getUTCFullYear(), end.getUTCMonth() + 1, 0)).getUTCDate();
       return isFirst && end.getUTCDate() === lastDay && start.getUTCFullYear() === end.getUTCFullYear() && start.getUTCMonth() === end.getUTCMonth();
     };
-    const includeMonth = !!(s && e && (daysBetween(s, e) > 7 || isFullMonthRange(s, e)));
+    const includeMonth = !!(s && e && isFullMonthRange(s, e));
 
     return list.filter(p => {
       const matchesReinsurer = !reinsurer || p.reinsurerName === reinsurer;
