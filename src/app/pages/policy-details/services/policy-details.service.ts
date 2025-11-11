@@ -103,7 +103,7 @@ export class PolicyDetailsService {
           const lastDay = new Date(Date.UTC(endD.getUTCFullYear(), endD.getUTCMonth() + 1, 0)).getUTCDate();
           return isFirst && endD.getUTCDate() === lastDay && startD.getUTCFullYear() === endD.getUTCFullYear() && startD.getUTCMonth() === endD.getUTCMonth();
         };
-        const includeMonth = !!(s && e && (daysBetween(s, e) > 7 || isFullMonthRange(s, e)));
+        const includeMonth = !!(s && e && isFullMonthRange(s, e));
         const base = list.filter(p => {
           const matchesReinsurer = !reinsurer || p.reinsurerName === reinsurer;
           const matchesTreaty = !treatyId || p.treatyId === treatyId;
